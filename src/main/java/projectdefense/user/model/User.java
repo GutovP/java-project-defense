@@ -2,7 +2,10 @@ package projectdefense.user.model;
 
 
 import jakarta.persistence.*;
+import projectdefense.address.model.Address;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,4 +33,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Title title;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Address> addresses = new ArrayList<>();
 }
