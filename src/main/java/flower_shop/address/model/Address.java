@@ -1,10 +1,10 @@
-package projectdefense.address.model;
+package flower_shop.address.model;
 
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import projectdefense.user.model.User;
+import flower_shop.user.model.User;
 
 import java.util.UUID;
 

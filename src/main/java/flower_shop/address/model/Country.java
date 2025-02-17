@@ -1,4 +1,4 @@
-package projectdefense.address.model;
+package flower_shop.address.model;
 
 public enum Country {
 

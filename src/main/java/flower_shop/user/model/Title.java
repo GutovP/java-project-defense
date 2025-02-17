@@ -1,4 +1,4 @@
-package projectdefense.user.model;
+package flower_shop.user.model;
 
 public enum Title {
 

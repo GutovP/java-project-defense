@@ -1,8 +1,8 @@
-package projectdefense.user.model;
+package flower_shop.user.model;
 
 
 import jakarta.persistence.*;
-import projectdefense.address.model.Address;
+import flower_shop.address.model.Address;
 
 import java.util.ArrayList;
 import java.util.List;
