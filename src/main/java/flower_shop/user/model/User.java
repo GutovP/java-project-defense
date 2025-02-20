@@ -27,13 +27,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String phoneNumber;
+//    @Column(nullable = false)
+//    private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Title title;
+//    @Enumerated(EnumType.STRING)
+//    @Column
+//    private Title title;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private List<Address> addresses = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+//    private List<Address> addresses = new ArrayList<>();
 }
