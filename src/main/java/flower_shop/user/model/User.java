@@ -1,13 +1,15 @@
 package flower_shop.user.model;
 
-
 import jakarta.persistence.*;
-import flower_shop.address.model.Address;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class User {
 
