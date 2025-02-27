@@ -21,7 +21,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void register(RegisterRequest registerRequest) {
+    public User register(RegisterRequest registerRequest) {
 
         Optional<User> optionalUser = userRepository.findByEmail(registerRequest.getEmail());
 
@@ -36,6 +36,6 @@ public class UserService {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 }
