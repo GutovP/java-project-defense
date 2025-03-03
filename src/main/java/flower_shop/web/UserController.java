@@ -7,13 +7,11 @@ import flower_shop.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
+@CrossOrigin(origins = "http://localhost:4200") // Replace with https://yourdomain.com when in production
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/auth")
 public class UserController {
