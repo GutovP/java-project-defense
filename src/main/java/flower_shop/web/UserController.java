@@ -3,6 +3,7 @@ package flower_shop.web;
 
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
+import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,15 @@ public class UserController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
+        User user = userService.login(loginRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
                 .body(user);
     }
 }
