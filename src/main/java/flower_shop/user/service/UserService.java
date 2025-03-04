@@ -2,6 +2,7 @@ package flower_shop.user.service;
 
 import flower_shop.user.model.User;
 import flower_shop.user.repository.UserRepository;
+import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,5 +38,21 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public User login(LoginRequest loginRequest) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Username or password are incorrect.");
+        }
+
+        User user = optionalUser.get();
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Username or password are incorrect.");
+        }
+
+        return user;
     }
 }
