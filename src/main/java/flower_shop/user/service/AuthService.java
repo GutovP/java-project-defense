@@ -13,13 +13,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -70,6 +70,6 @@ public class UserService {
        user.setLastName(profileEditRequest.getLastName());
        user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
 
-       userRepository.save(user);
+       return userRepository.save(user);
     }
 }

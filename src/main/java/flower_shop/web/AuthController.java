@@ -1,7 +1,7 @@
 package flower_shop.web;
 
 import flower_shop.user.model.User;
-import flower_shop.user.service.UserService;
+import flower_shop.user.service.AuthService;
 import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.ProfileEditRequest;
 import flower_shop.web.dto.RegisterRequest;
@@ -17,19 +17,19 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 @CrossOrigin(origins = "http://localhost:4200") // Replace with https://yourdomain.com when in production
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/auth")
-public class UserController {
+public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest) {
 
-        User user = userService.register(registerRequest);
+        User user = authService.register(registerRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,7 +38,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-        User user = userService.login(loginRequest);
+        User user = authService.login(loginRequest);
 
         return ResponseEntity
                 .status(HttpStatus.FOUND)
@@ -48,7 +48,7 @@ public class UserController {
     @PutMapping("/{id}/profile")
     public ResponseEntity<User> updateProfile(@PathVariable UUID id, @RequestBody ProfileEditRequest profileEditRequest) {
 
-        User user = userService.editProfile(id, profileEditRequest);
+        User user = authService.editProfile(id, profileEditRequest);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
