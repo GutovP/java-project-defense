@@ -63,7 +63,7 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User with id [%s] does not exist.".formatted(userId)));
     }
 
-    public void editProfile(UUID userId, ProfileEditRequest profileEditRequest) {
+    public User editProfile(UUID userId, ProfileEditRequest profileEditRequest) {
 
        User user = getById(userId);
        user.setFirstName(profileEditRequest.getFirstName());
