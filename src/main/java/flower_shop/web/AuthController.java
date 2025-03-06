@@ -38,7 +38,7 @@ public class AuthController {
         User user = userService.login(loginRequest);
 
         return ResponseEntity
-                .status(HttpStatus.FOUND)
+                .status(HttpStatus.OK)
                 .body(user);
     }
 }

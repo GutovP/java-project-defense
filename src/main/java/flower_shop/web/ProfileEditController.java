@@ -15,12 +15,12 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/users")
-public class ProfileController {
+public class ProfileEditController {
 
     private final UserService userService;
 
     @Autowired
-    public ProfileController(UserService userService) {
+    public ProfileEditController(UserService userService) {
         this.userService = userService;
     }
 
