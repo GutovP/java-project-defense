@@ -50,22 +50,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(LoginRequest loginRequest) {
-
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("Username or password are incorrect.");
-        }
-
-        User user = optionalUser.get();
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Username or password are incorrect.");
-        }
-
-        return user;
-    }
-
     public User getById(UUID userId) {
 
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User with id [%s] does not exist.".formatted(userId)));
@@ -81,7 +65,19 @@ public class UserService {
        return userRepository.save(user);
     }
 
-    public String authenticate(LoginRequest loginRequest) {
+    public String loginAndAuthenticate(LoginRequest loginRequest) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Username or password are incorrect.");
+        }
+
+        User user = optionalUser.get();
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Username or password are incorrect.");
+        }
+
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -90,6 +86,6 @@ public class UserService {
 
         }
 
-        return "Error!!!";
+        throw new RuntimeException("Authentication failed.");
     }
 }
