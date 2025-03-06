@@ -1,11 +1,15 @@
 package flower_shop.user.service;
 
+import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.ProfileEditRequest;
 import flower_shop.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +21,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public User register(RegisterRequest registerRequest) {
@@ -71,5 +79,17 @@ public class UserService {
        user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
 
        return userRepository.save(user);
+    }
+
+    public String authenticate(LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(loginRequest.getEmail());
+
+        }
+
+        return "Error!!!";
     }
 }

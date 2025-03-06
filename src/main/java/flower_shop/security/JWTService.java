@@ -1,4 +1,4 @@
-package flower_shop.user.service;
+package flower_shop.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

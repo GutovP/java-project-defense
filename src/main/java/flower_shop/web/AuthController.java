@@ -34,11 +34,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-        User user = userService.login(loginRequest);
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+
+        String token = userService.authenticate(loginRequest);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(user);
+                .body(token);
     }
 }
