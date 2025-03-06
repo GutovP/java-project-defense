@@ -1,5 +1,7 @@
 package flower_shop.user.service;
 
+import flower_shop.exception.AuthenticationException;
+import flower_shop.exception.UserNotFoundException;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.repository.UserRepository;
@@ -69,13 +71,13 @@ public class UserService {
 
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new RuntimeException("Username or password are incorrect.");
+            throw new UserNotFoundException("Username or password are incorrect.");
         }
 
         User user = optionalUser.get();
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Username or password are incorrect.");
+            throw new AuthenticationException("Username or password are incorrect.");
         }
 
         Authentication authentication = authenticationManager
@@ -86,6 +88,6 @@ public class UserService {
 
         }
 
-        throw new RuntimeException("Authentication failed.");
+        throw new AuthenticationException("Authentication failed.");
     }
 }
