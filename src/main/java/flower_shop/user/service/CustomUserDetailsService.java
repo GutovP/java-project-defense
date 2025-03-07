@@ -1,5 +1,6 @@
-package flower_shop.security;
+package flower_shop.user.service;
 
+import flower_shop.security.UserPrincipal;
 import flower_shop.user.model.User;
 import flower_shop.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
