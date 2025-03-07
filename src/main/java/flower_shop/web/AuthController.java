@@ -1,5 +1,6 @@
 package flower_shop.web;
 
+import flower_shop.security.JwtResponse;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
@@ -38,8 +39,6 @@ public class AuthController {
 
         String token = userService.loginAndAuthenticate(loginRequest);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(token);
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 }
