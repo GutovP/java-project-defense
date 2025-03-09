@@ -25,13 +25,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest registerRequest) {
 
-        User user = userService.register(registerRequest);
+        userService.register(registerRequest);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")

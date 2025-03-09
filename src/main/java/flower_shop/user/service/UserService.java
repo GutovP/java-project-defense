@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -52,21 +51,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getById(UUID userId) {
-
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User with id [%s] does not exist.".formatted(userId)));
-    }
-
-    public User editProfile(UUID userId, ProfileEditRequest profileEditRequest) {
-
-       User user = getById(userId);
-       user.setFirstName(profileEditRequest.getFirstName());
-       user.setLastName(profileEditRequest.getLastName());
-       user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
-
-       return userRepository.save(user);
-    }
-
     public String loginAndAuthenticate(LoginRequest loginRequest) {
 
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
@@ -85,9 +69,24 @@ public class UserService {
 
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(loginRequest.getEmail());
-
         }
 
         throw new AuthenticationException("Authentication failed.");
+    }
+
+    public User getUserProfile(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+    public User updateUserProfile(String email, ProfileEditRequest profileEditRequest) {
+        User user = getUserProfile(email);
+
+        user.setFirstName(profileEditRequest.getFirstName());
+        user.setLastName(profileEditRequest.getLastName());
+        user.setEmail(profileEditRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
+
+        return userRepository.save(user);
     }
 }

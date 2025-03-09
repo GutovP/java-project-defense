@@ -21,11 +21,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     private final JWTService jwtService;
-    ApplicationContext context;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    public JwtFilter(JWTService jwtService) {
+    public JwtFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
         this.jwtService = jwtService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
 
@@ -43,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = context.getBean(CustomUserDetailsService.class).loadUserByUsername(email);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
