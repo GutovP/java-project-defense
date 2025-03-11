@@ -3,6 +3,7 @@ package flower_shop.web;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.ProfileEditRequest;
+import flower_shop.web.mapper.UserMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,12 @@ public class ProfileEditController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<User> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<UserMapper> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
+        UserMapper userMapper = new UserMapper(user);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper);
     }
 
     @PutMapping("/profile")
