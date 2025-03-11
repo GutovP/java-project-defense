@@ -74,13 +74,13 @@ public class UserService {
         throw new AuthenticationException("Authentication failed.");
     }
 
-    public User getUserProfile(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
     public User updateUserProfile(String email, ProfileEditRequest profileEditRequest) {
-        User user = getUserProfile(email);
+        User user = getUserByEmail(email);
 
         user.setFirstName(profileEditRequest.getFirstName());
         user.setLastName(profileEditRequest.getLastName());

@@ -1,9 +1,9 @@
 package flower_shop.web;
 
-import flower_shop.security.JwtResponse;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
+import flower_shop.web.dto.LoginResponse;
 import flower_shop.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,10 +33,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
 
         String token = userService.loginAndAuthenticate(loginRequest);
+        User user = userService.getUserByEmail(loginRequest.getEmail());
+        LoginResponse loginResponse = new LoginResponse(token, user);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(loginResponse);
     }
 }

@@ -26,7 +26,7 @@ public class ProfileEditController {
     @GetMapping("/profile")
     public ResponseEntity<User> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
-        User user = userService.getUserProfile(email);
+        User user = userService.getUserByEmail(email);
 
         return ResponseEntity.ok(user);
     }
