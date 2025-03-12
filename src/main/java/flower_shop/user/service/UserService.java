@@ -82,10 +82,18 @@ public class UserService {
     public User updateUserProfile(String email, ProfileEditRequest profileEditRequest) {
         User user = getUserByEmail(email);
 
-        user.setFirstName(profileEditRequest.getFirstName());
-        user.setLastName(profileEditRequest.getLastName());
-        user.setEmail(profileEditRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
+        if (profileEditRequest.getFirstName() != null) {
+            user.setFirstName(profileEditRequest.getFirstName());
+        }
+        if (profileEditRequest.getLastName() != null) {
+            user.setLastName(profileEditRequest.getLastName());
+        }
+        if (profileEditRequest.getEmail() != null) {
+            user.setEmail(profileEditRequest.getEmail());
+        }
+        if (profileEditRequest.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
+        }
 
         return userRepository.save(user);
     }
