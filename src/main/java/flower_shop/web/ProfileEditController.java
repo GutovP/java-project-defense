@@ -1,5 +1,8 @@
 package flower_shop.web;
 
+import flower_shop.exception.InvalidTokenException;
+import flower_shop.exception.TokenExpiredException;
+import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.PasswordChangeRequest;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
@@ -19,10 +23,14 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 public class ProfileEditController {
 
     private final UserService userService;
+    private final JWTService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public ProfileEditController(UserService userService) {
+    public ProfileEditController(UserService userService, JWTService jwtService, UserDetailsService userDetailsService) {
         this.userService = userService;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("/profile")
@@ -49,6 +57,25 @@ public class ProfileEditController {
         userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
 
         return ResponseEntity.ok().body("Password changed successfully");
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new InvalidTokenException("Invalid token format");
+        }
+
+        token = token.substring(7);
+
+        String email = jwtService.extractEmail(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        if (jwtService.validateToken(token, userDetails)) {
+            return ResponseEntity.ok().body("Token is valid");
+
+        } else {
+            throw new TokenExpiredException("Token is expired");
+        }
     }
 
 }
