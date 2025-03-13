@@ -2,6 +2,7 @@ package flower_shop.web;
 
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
+import flower_shop.web.dto.PasswordChangeRequest;
 import flower_shop.web.dto.ProfileEditRequest;
 import flower_shop.web.mapper.UserMapper;
 import jakarta.validation.Valid;
@@ -40,4 +41,14 @@ public class ProfileEditController {
 
         return ResponseEntity.ok(updatedUser);
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
+        String email = userDetails.getUsername();
+
+        userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
+
+        return ResponseEntity.ok().body("Password changed successfully");
+    }
+
 }
