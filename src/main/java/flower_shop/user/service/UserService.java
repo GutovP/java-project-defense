@@ -38,7 +38,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByEmail(registerRequest.getEmail());
 
         if (optionalUser.isPresent()) {
-            throw new RuntimeException("User already exists!");
+            throw new AuthenticationException("User already exists!");
         }
 
         User user = User.builder()
