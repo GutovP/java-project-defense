@@ -102,7 +102,9 @@ public class UserService {
             throw new RuntimeException("Current password is incorrect");
         }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        if (newPassword != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
 
         return userRepository.save(user);
     }
