@@ -91,10 +91,20 @@ public class UserService {
         if (profileEditRequest.getEmail() != null) {
             user.setEmail(profileEditRequest.getEmail());
         }
-        if (profileEditRequest.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(profileEditRequest.getPassword()));
-        }
 
         return userRepository.save(user);
     }
+
+    public User changeUserPassword(String email, String currentPassword, String newPassword) {
+        User user = getUserByEmail(email);
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        return userRepository.save(user);
+    }
+
 }
