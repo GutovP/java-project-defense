@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Product {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,14 +22,6 @@ public class Product {
 
     private String description;
 
-    private double costPrice;
-
-    private double salePrice;
-
-    private int currentQuantity;
-
-    private String image;
-
-    @ManyToOne
-    private Category category;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
+    List<Product> products;
 }
