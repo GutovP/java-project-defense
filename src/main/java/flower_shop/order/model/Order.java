@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +32,9 @@ public class Order {
 
     private String transactionId;
 
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
-    private double discountPrice;
+    private BigDecimal discountPrice;
 
     private String notes;
 
@@ -40,5 +42,5 @@ public class Order {
     private User customer;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -21,9 +22,9 @@ public class Product {
 
     private String description;
 
-    private double costPrice;
+    private BigDecimal costPrice;
 
-    private double salePrice;
+    private BigDecimal salePrice;
 
     private int currentQuantity;
 

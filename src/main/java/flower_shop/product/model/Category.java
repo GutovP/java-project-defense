@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,5 +24,5 @@ public class Category {
     private String description;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
-    List<Product> products;
+    List<Product> products = new ArrayList<>();
 }

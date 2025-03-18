@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -20,9 +21,9 @@ public class OrderDetail {
 
     private int quantity;
 
-    private double unitPrice;
+    private BigDecimal unitPrice;
 
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;

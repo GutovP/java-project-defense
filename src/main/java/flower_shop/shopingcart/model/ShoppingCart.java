@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,4 +26,7 @@ public class ShoppingCart {
 
     @OneToOne(fetch = FetchType.EAGER)
     private User customer;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "shoppingCart")
+    private List<ShoppingCartItem> shoppingCartItems = new ArrayList<>();
 }

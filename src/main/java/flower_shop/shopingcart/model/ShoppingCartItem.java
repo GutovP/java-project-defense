@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -20,7 +21,7 @@ public class ShoppingCartItem {
 
     private int quantity;
 
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private ShoppingCart shoppingCart;

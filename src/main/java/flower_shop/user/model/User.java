@@ -1,8 +1,12 @@
 package flower_shop.user.model;
 
+import flower_shop.order.model.Order;
+import flower_shop.shopingcart.model.ShoppingCart;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -29,13 +33,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-//    @Column(nullable = false)
-//    private String phoneNumber;
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "customer")
+    private ShoppingCart shoppingCart;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column
-//    private Title title;
-
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-//    private List<Address> addresses = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    private List<Order> orders = new ArrayList<>();
+    
 }
