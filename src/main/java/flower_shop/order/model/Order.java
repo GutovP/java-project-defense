@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -37,4 +38,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User customer;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails;
 }
