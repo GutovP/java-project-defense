@@ -55,13 +55,13 @@ public class UserService {
 
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("Username or password are incorrect.");
+            throw new UserNotFoundException("Email or password are incorrect.");
         }
 
         User user = optionalUser.get();
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new AuthenticationException("Username or password are incorrect.");
+            throw new AuthenticationException("Email or password are incorrect.");
         }
 
         Authentication authentication = authenticationManager

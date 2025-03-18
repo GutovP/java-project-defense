@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
@@ -56,7 +58,7 @@ public class ProfileEditController {
 
         userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
 
-        return ResponseEntity.ok().body("Password changed successfully");
+        return ResponseEntity.ok().body(Map.of("message", "Password changed successfully"));
     }
 
     @GetMapping("/validate-token")
