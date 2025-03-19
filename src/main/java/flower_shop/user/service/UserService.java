@@ -4,6 +4,7 @@ import flower_shop.exception.AuthenticationException;
 import flower_shop.exception.UserNotFoundException;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
+import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.ProfileEditRequest;
@@ -46,6 +47,7 @@ public class UserService {
                 .lastName(registerRequest.getLastName())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(UserRole.USER)
                 .build();
 
         return userRepository.save(user);
