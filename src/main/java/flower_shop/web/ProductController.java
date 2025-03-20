@@ -1,11 +1,12 @@
 package flower_shop.web;
 
+import flower_shop.product.model.Product;
 import flower_shop.product.service.ProductService;
+import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class ProductController {
 
         return productService.getProduct(category, name);
     }
-    
+
+    @PostMapping("/add-new-product")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Product addNewProduct(@RequestBody @Valid ProductRequest productRequest) {
+
+        return productService.addNewProduct(productRequest);
+    }
 
 }
