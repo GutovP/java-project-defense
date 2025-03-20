@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll() // Public endpoints (register, login)
+                        .requestMatchers("/api/v1/products/add-new-product").hasRole("ADMIN")
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
                 .httpBasic(Customizer.withDefaults())
