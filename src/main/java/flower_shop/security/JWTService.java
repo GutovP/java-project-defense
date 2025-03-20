@@ -1,5 +1,6 @@
 package flower_shop.security;
 
+import flower_shop.user.model.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -34,8 +35,9 @@ public class JWTService {
         }
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, UserRole role) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role.name());
 
         return Jwts.builder()
                 .claims()
@@ -87,5 +89,11 @@ public class JWTService {
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public UserRole extractRole(String token) {
+        Claims claims = extractAllClaims(token);
+
+        return UserRole.valueOf(claims.get("role", String.class));
     }
 }
