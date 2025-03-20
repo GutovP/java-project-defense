@@ -21,14 +21,19 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column
     private String description;
 
+    @Column
     private BigDecimal costPrice;
 
+    @Column
     private BigDecimal salePrice;
 
+    @Column
     private int currentQuantity;
 
+    @Column
     private String image;
 
     @ManyToOne
