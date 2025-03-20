@@ -70,7 +70,7 @@ public class UserService {
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(loginRequest.getEmail());
+            return jwtService.generateToken(loginRequest.getEmail(), user.getRole());
         }
 
         throw new AuthenticationException("Authentication failed.");
