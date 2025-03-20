@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -17,7 +18,21 @@ public class ProductService {
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
-    
+
+    public List<ProductResponse> getAllProducts() {
+
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(product -> new ProductResponse(
+                        product.getName(),
+                        product.getDescription(),
+                        product.getSalePrice(),
+                        product.getCategory().getName(),
+                        product.getImage()
+                )).collect(Collectors.toList());
+    }
+
     public ProductResponse getProduct(String categoryName, String productName) {
 
         Optional<Product> optionalProduct = productRepository.findByName(productName);
