@@ -1,6 +1,5 @@
 package flower_shop.user.model;
 
-import flower_shop.shopingcart.model.ShoppingCart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,9 +32,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
-
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "customer")
-    private ShoppingCart shoppingCart;
 
     
 }
