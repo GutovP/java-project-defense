@@ -1,6 +1,5 @@
 package flower_shop.web.dto;
 
-import flower_shop.product.model.Category;
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Data;
@@ -25,5 +24,5 @@ public class ProductRequest {
     private String image;
 
     @NotBlank
-    private Category category;
+    private String category;
 }

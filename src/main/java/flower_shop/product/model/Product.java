@@ -38,6 +38,6 @@ public class Product {
     @Column
     private String image;
 
-    @ManyToOne
-    private Category category;
+    @Column
+    private String category;
 }

@@ -26,11 +26,12 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
 
         return products.stream()
+                .filter(product -> product.getCurrentQuantity() > 0)
                 .map(product -> new ProductResponse(
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),
-                        product.getCategory().getName(),
+                        product.getCategory(),
                         product.getImage()
                 )).collect(Collectors.toList());
     }
@@ -43,12 +44,12 @@ public class ProductService {
 
             Product product = optionalProduct.get();
 
-            if (product.getCategory() != null && product.getCategory().getName().equals(categoryName)) {
+            if (product.getCategory() != null && product.getCategory().equals(categoryName)) {
                 return new ProductResponse(
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),
-                        product.getCategory().getName(),
+                        product.getCategory(),
                         product.getImage()
                 );
             }

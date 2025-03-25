@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "api/v1/products/all").permitAll() // Public endpoints (register, login)
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/products/all").permitAll() // Public endpoints (register, login)
                         .requestMatchers("/api/v1/products/add-new-product").hasAuthority("ADMIN")
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
