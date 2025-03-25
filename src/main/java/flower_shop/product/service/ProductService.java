@@ -35,7 +35,7 @@ public class ProductService {
                 )).collect(Collectors.toList());
     }
 
-    public ProductResponse getProduct(String categoryName, String productName) {
+    public List<ProductResponse> getProduct(String categoryName, String productName) {
 
         Optional<Product> optionalProduct = productRepository.findByName(productName);
 
@@ -44,13 +44,13 @@ public class ProductService {
             Product product = optionalProduct.get();
 
             if (product.getCategory() != null && product.getCategory().equals(categoryName)) {
-                return new ProductResponse(
+                return List.of(new ProductResponse(
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),
                         product.getCategory(),
                         product.getImage()
-                );
+                ));
             }
         }
 

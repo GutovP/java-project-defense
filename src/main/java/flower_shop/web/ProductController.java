@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/{category}/{name}")
-    public ProductResponse getProduct(@PathVariable String category, @PathVariable String name) {
+    public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name) {
 
         return productService.getProduct(category, name);
     }
