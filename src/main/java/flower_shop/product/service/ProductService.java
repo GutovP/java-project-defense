@@ -31,7 +31,8 @@ public class ProductService {
                         product.getDescription(),
                         product.getSalePrice(),
                         product.getCategory(),
-                        product.getImage()
+                        product.getImage(),
+                        product.getCurrentQuantity()
                 )).collect(Collectors.toList());
     }
 
@@ -49,7 +50,8 @@ public class ProductService {
                         product.getDescription(),
                         product.getSalePrice(),
                         product.getCategory(),
-                        product.getImage()
+                        product.getImage(),
+                        product.getCurrentQuantity()
                 ));
             }
         }

@@ -20,4 +20,6 @@ public class ProductResponse {
     private String categoryName;
 
     private String image;
+
+    private int currentQuantity;
 }
