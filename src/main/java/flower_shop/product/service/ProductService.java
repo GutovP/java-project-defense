@@ -5,6 +5,7 @@ import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
+import flower_shop.web.dto.UpdateQuantityRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,5 +72,17 @@ public class ProductService {
                 .build();
 
         return productRepository.save(product);
+    }
+
+    public Product updateProductQuantity(String category, String productName, UpdateQuantityRequest updateQuantityRequest) {
+
+        Optional<Product> optionalProduct = productRepository.findByCategoryAndName(productName, category);
+
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            product.setCurrentQuantity(updateQuantityRequest.getNewQuantity());
+            return productRepository.save(product);
+        }
+        throw new ProductNotFoundException("Product not found in the specified category");
     }
 }

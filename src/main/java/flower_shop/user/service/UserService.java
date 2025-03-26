@@ -34,7 +34,7 @@ public class UserService {
         this.jwtService = jwtService;
     }
 
-    public User register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
 
         Optional<User> optionalUser = userRepository.findByEmail(registerRequest.getEmail());
 
@@ -50,7 +50,7 @@ public class UserService {
                 .role(UserRole.USER)
                 .build();
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public String loginAndAuthenticate(LoginRequest loginRequest) {
@@ -97,7 +97,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User changeUserPassword(String email, String currentPassword, String newPassword) {
+    public void changeUserPassword(String email, String currentPassword, String newPassword) {
         User user = getUserByEmail(email);
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
@@ -108,7 +108,7 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 }
