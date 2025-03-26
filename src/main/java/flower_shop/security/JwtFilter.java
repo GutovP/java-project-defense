@@ -1,5 +1,6 @@
 package flower_shop.security;
 
+import flower_shop.exception.InvalidTokenException;
 import flower_shop.user.model.UserRole;
 import flower_shop.user.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -38,13 +39,20 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-        String email = null;
-        String token = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            email = jwtService.extractEmail(token);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        String token = authHeader.substring(7);
+
+        if (token.trim().isEmpty() || !token.contains(".")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String email = jwtService.extractEmail(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -54,13 +62,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 UserRole role = jwtService.extractRole(token);
 
-                Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role.name()));
+                Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } else {
+                throw new InvalidTokenException("Invalid JWT token");
             }
         }
         filterChain.doFilter(request, response);

@@ -20,12 +20,12 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponse> getAllProducts() {
+    public List<ProductResponse> getAllProducts(String userRole) {
 
         List<Product> products = productRepository.findAll();
 
         return products.stream()
-                .filter(product -> product.getCurrentQuantity() > 0)
+                .filter(product -> userRole.equals("ROLE_ADMIN") || product.getCurrentQuantity() > 0)
                 .map(product -> new ProductResponse(
                         product.getName(),
                         product.getDescription(),

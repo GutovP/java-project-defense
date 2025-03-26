@@ -6,6 +6,9 @@ import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +28,14 @@ public class ProductController {
     @GetMapping("/all")
     public List<ProductResponse> getAllProducts() {
 
-        return productService.getAllProducts();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String userRole = auth.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("USER");
+
+        return productService.getAllProducts(userRole);
     }
 
     @GetMapping("/{category}/{name}")
