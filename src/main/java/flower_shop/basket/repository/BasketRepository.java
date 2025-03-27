@@ -13,5 +13,5 @@ public interface BasketRepository extends JpaRepository<Basket, UUID> {
 
     Optional<Basket> findByUser(User user);
 
-    
+
 }
