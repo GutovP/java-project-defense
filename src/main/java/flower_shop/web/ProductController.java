@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
@@ -79,9 +80,9 @@ public class ProductController {
        boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity());
 
         if (isUpdated) {
-            return ResponseEntity.ok("Product quantity updated successfully.");
+            return ResponseEntity.ok().body(Map.of("message", "Product quantity updated successfully."));
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Product not found."));
         }
 
     }
