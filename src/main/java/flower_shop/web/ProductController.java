@@ -4,7 +4,10 @@ import flower_shop.product.model.Product;
 import flower_shop.product.service.ProductService;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
+import flower_shop.web.dto.UpdateQuantityRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,10 +41,49 @@ public class ProductController {
         return productService.getAllProducts(userRole);
     }
 
+
     @GetMapping("/{category}/{name}")
     public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name) {
 
-        return productService.getProduct(category, name);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = "USER";
+
+        if (auth != null && auth.getAuthorities() != null) {
+            userRole = auth.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElse("USER");
+        }
+
+        return productService.getProduct(category, name, userRole);
+    }
+
+
+    @PutMapping("/{category}/{name}")
+    public ResponseEntity<?> updateQuantity(@PathVariable String category, @PathVariable String name, @RequestBody UpdateQuantityRequest updateQuantityRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = "USER";
+
+        if (auth != null && auth.getAuthorities() != null) {
+            userRole = auth.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElse("USER");
+        }
+
+        if (!userRole.equals("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to update this product");
+        }
+
+       boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity());
+
+        if (isUpdated) {
+            return ResponseEntity.ok("Product quantity updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+
     }
 
     @PostMapping("/add-new-product")

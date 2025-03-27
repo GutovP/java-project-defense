@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class UpdateQuantityRequest {
 
-    private int newQuantity;
+    private int quantity;
 }

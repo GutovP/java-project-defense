@@ -5,7 +5,6 @@ import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
-import flower_shop.web.dto.UpdateQuantityRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class ProductService {
                 )).collect(Collectors.toList());
     }
 
-    public List<ProductResponse> getProduct(String categoryName, String productName) {
+    public List<ProductResponse> getProduct(String categoryName, String productName, String userRole) {
 
         Optional<Product> optionalProduct = productRepository.findByName(productName);
 
@@ -46,13 +45,16 @@ public class ProductService {
             Product product = optionalProduct.get();
 
             if (product.getCategory() != null && product.getCategory().equals(categoryName)) {
+
+                int showQuantity = userRole.equals("ROLE_ADMIN") ? product.getCurrentQuantity() : 0;
+
                 return List.of(new ProductResponse(
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),
                         product.getCategory(),
                         product.getImage(),
-                        product.getCurrentQuantity()
+                        showQuantity
                 ));
             }
         }
@@ -74,15 +76,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product updateProductQuantity(String category, String productName, UpdateQuantityRequest updateQuantityRequest) {
+    public boolean updateProductQuantity(String category, String productName, int newQuantity) {
 
-        Optional<Product> optionalProduct = productRepository.findByCategoryAndName(productName, category);
+        Optional<Product> optionalProduct = productRepository.findByCategoryAndName(category, productName);
 
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
-            product.setCurrentQuantity(updateQuantityRequest.getNewQuantity());
-            return productRepository.save(product);
+            product.setCurrentQuantity(newQuantity);
+            productRepository.save(product);
+            return true;
         }
-        throw new ProductNotFoundException("Product not found in the specified category");
+        return false;
     }
 }
