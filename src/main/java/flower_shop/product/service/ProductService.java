@@ -5,6 +5,7 @@ import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }

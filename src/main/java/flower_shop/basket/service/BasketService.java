@@ -8,6 +8,7 @@ import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.User;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class BasketService {
     private final ProductRepository productRepository;
     private final BasketRepository basketRepository;
 
+    @Autowired
     public BasketService(ProductRepository productRepository, BasketRepository basketRepository) {
         this.productRepository = productRepository;
         this.basketRepository = basketRepository;
