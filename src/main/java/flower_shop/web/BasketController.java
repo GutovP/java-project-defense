@@ -43,4 +43,12 @@ public class BasketController {
 
         return ResponseEntity.ok("Item added to basket");
     }
+
+    @PutMapping("{itemId}/quantity")
+    public ResponseEntity<BasketResponse> updateItemQuantity(@PathVariable UUID itemId, @RequestParam int newQuantity, @AuthenticationPrincipal User user) {
+
+        Basket basket = basketService.updateBasketItemQuantity(user, itemId, newQuantity);
+
+        return ResponseEntity.ok(new BasketResponse(basket));
+    }
 }
