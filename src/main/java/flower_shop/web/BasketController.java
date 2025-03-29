@@ -6,6 +6,7 @@ import flower_shop.basket.repository.BasketRepository;
 import flower_shop.basket.service.BasketService;
 import flower_shop.user.model.User;
 import flower_shop.web.dto.BasketResponse;
+import flower_shop.web.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,13 +34,15 @@ public class BasketController {
 
         Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Basket not found"));
 
-        return ResponseEntity.ok(new BasketResponse(basket));
+        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addToBasket(@RequestParam UUID productId, @RequestParam int quantity, @AuthenticationPrincipal User user) {
 
-        Basket basket = basketService.addToBasket( user, productId, quantity);
+       basketService.addToBasket( user, productId, quantity);
 
         return ResponseEntity.ok("Item added to basket");
     }
@@ -49,6 +52,8 @@ public class BasketController {
 
         Basket basket = basketService.updateBasketItemQuantity(user, itemId, newQuantity);
 
-        return ResponseEntity.ok(new BasketResponse(basket));
+        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+
+        return ResponseEntity.ok(response);
     }
 }

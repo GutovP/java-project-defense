@@ -7,7 +7,7 @@ import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.PasswordChangeRequest;
 import flower_shop.web.dto.ProfileEditRequest;
-import flower_shop.web.mapper.UserMapper;
+import flower_shop.web.dto.ProfileResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,12 +36,12 @@ public class ProfileEditController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserMapper> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
-        UserMapper userMapper = new UserMapper(user);
+        ProfileResponse profileResponse = new ProfileResponse(user);
 
-        return ResponseEntity.ok(userMapper);
+        return ResponseEntity.ok(profileResponse);
     }
 
     @PutMapping("/profile")

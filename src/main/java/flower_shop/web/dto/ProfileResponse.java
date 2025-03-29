@@ -1,4 +1,4 @@
-package flower_shop.web.mapper;
+package flower_shop.web.dto;
 
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class UserMapper {
+public class ProfileResponse {
 
     private UUID userId;
     private String firstName;
@@ -15,7 +15,7 @@ public class UserMapper {
     private String email;
     private UserRole role;
 
-    public UserMapper(User user) {
+    public ProfileResponse(User user) {
         this.userId = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
