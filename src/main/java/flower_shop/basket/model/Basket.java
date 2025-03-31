@@ -27,11 +27,11 @@ public class Basket {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "basket", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "basket", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketItem> items = new ArrayList<>();
 
     @Column(nullable = false)
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

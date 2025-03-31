@@ -1,8 +1,11 @@
 package flower_shop.user.model;
 
+import flower_shop.basket.model.Basket;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -33,5 +36,7 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    @OneToMany(mappedBy = "user")
+    private List<Basket> baskets = new ArrayList<>();
     
 }

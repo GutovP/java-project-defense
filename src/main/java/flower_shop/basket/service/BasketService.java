@@ -8,6 +8,7 @@ import flower_shop.exception.ProductNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.User;
+import flower_shop.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,20 @@ public class BasketService {
     private final BasketItemRepository basketItemRepository;
 
     @Autowired
-    public BasketService(ProductRepository productRepository, BasketRepository basketRepository, BasketItemRepository basketItemRepository) {
+    public BasketService(ProductRepository productRepository, BasketRepository basketRepository, BasketItemRepository basketItemRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.basketRepository = basketRepository;
         this.basketItemRepository = basketItemRepository;
     }
 
     public Basket addToBasket(User user, UUID productId, int quantity) {
+
         Basket basket = basketRepository.findByUser(user).orElseGet(() -> {
             Basket newBasket = new Basket();
             newBasket.setUser(user);
             newBasket.setCreatedAt(LocalDateTime.now());
             newBasket.setUpdatedAt(LocalDateTime.now());
+            newBasket.setTotalPrice(BigDecimal.ZERO);
             return basketRepository.save(newBasket);
         });
 
@@ -48,6 +51,8 @@ public class BasketService {
             BasketItem basketItem = existingItem.get();
             basketItem.setQuantity(basketItem.getQuantity() + quantity);
 
+            System.out.println("Updated basket item: " + basketItem.getProduct().getName() + " (Quantity: " + basketItem.getQuantity() + ")");
+
         } else {
             Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found."));
             BasketItem newBasketItem = new BasketItem();
@@ -55,12 +60,18 @@ public class BasketService {
             newBasketItem.setQuantity(quantity);
             newBasketItem.setBasket(basket);
             basket.getItems().add(newBasketItem);
+
+            System.out.println("Added new basket item: " + newBasketItem.getProduct().getName() + " (Quantity: " + newBasketItem.getQuantity() + ")");
         }
 
         BigDecimal updatedTotalPrice = calculateTotalPrice(basket);
         basket.setTotalPrice(updatedTotalPrice);
         basket.setUpdatedAt(LocalDateTime.now());
-        return basketRepository.save(basket);
+        Basket savedBasket = basketRepository.save(basket);
+
+        System.out.println("Basket saved with " + savedBasket.getItems().size() + " items. Total Price: " + savedBasket.getTotalPrice());
+
+        return savedBasket;
     }
 
     public BigDecimal calculateTotalPrice(Basket basket) {
@@ -87,4 +98,5 @@ public class BasketService {
 
         return basketRepository.save(basket);
     }
+
 }

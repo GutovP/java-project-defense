@@ -15,7 +15,7 @@ public class DtoMapper {
 
         List<BasketItemResponse> itemResponses = basket.getItems().stream()
                 .map( item -> new BasketItemResponse(
-                       item.getId(),
+                        item.getId(),
                         item.getProduct().getName(),
                         item.getProduct().getSalePrice(),
                         item.getQuantity(),

@@ -29,6 +29,7 @@ public class ProductService {
         return products.stream()
                 .filter(product -> userRole.equals("ROLE_ADMIN") || product.getCurrentQuantity() > 0)
                 .map(product -> new ProductResponse(
+                        product.getId(),
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),
@@ -51,6 +52,7 @@ public class ProductService {
                 int showQuantity = userRole.equals("ROLE_ADMIN") ? product.getCurrentQuantity() : 0;
 
                 return List.of(new ProductResponse(
+                        product.getId(),
                         product.getName(),
                         product.getDescription(),
                         product.getSalePrice(),

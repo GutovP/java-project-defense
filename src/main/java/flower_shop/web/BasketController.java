@@ -5,11 +5,14 @@ import flower_shop.basket.model.Basket;
 import flower_shop.basket.repository.BasketRepository;
 import flower_shop.basket.service.BasketService;
 import flower_shop.user.model.User;
+import flower_shop.user.service.UserService;
+import flower_shop.web.dto.BasketRequest;
 import flower_shop.web.dto.BasketResponse;
 import flower_shop.web.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,15 +25,20 @@ public class BasketController {
 
     private final BasketService basketService;
     private final BasketRepository basketRepository;
+    private final UserService userService;
 
     @Autowired
-    public BasketController(BasketService basketService, BasketRepository basketRepository) {
+    public BasketController(BasketService basketService, BasketRepository basketRepository, UserService userService) {
         this.basketService = basketService;
         this.basketRepository = basketRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/view")
-    public ResponseEntity<BasketResponse> viewBasket(@AuthenticationPrincipal User user) {
+    public ResponseEntity<BasketResponse> viewBasket(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        User user = userService.getUserByEmail(email);
 
         Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Basket not found"));
 
@@ -40,17 +48,23 @@ public class BasketController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addToBasket(@RequestParam UUID productId, @RequestParam int quantity, @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> addToBasket(@RequestBody BasketRequest basketRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
-       basketService.addToBasket( user, productId, quantity);
+        String email = userDetails.getUsername();
+        User user = userService.getUserByEmail(email);
+
+        basketService.addToBasket( user, basketRequest.getProductId(), basketRequest.getQuantity());
 
         return ResponseEntity.ok("Item added to basket");
     }
 
-    @PutMapping("{itemId}/quantity")
-    public ResponseEntity<BasketResponse> updateItemQuantity(@PathVariable UUID itemId, @RequestParam int newQuantity, @AuthenticationPrincipal User user) {
+    @PutMapping("{productId}/quantity")
+    public ResponseEntity<BasketResponse> updateItemQuantity(@PathVariable UUID productId, @RequestParam int newQuantity, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Basket basket = basketService.updateBasketItemQuantity(user, itemId, newQuantity);
+        String email = userDetails.getUsername();
+        User user = userService.getUserByEmail(email);
+
+        Basket basket = basketService.updateBasketItemQuantity(user, productId, newQuantity);
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
 
