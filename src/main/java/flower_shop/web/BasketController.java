@@ -72,4 +72,16 @@ public class BasketController {
 
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{basketItemId}/remove")
+    public ResponseEntity<BasketResponse> removeFromBasket(@PathVariable UUID basketItemId, @AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userService.getUserByEmail(email);
+
+        Basket basket = basketService.removeBasketItem(user, basketItemId);
+
+        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+        return ResponseEntity.ok(response);
+    }
+
 }
