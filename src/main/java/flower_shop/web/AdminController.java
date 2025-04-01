@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
@@ -36,10 +37,10 @@ public class AdminController {
     }
 
     @PutMapping("/{userId}/role")
-    public ResponseEntity<String> updateUserRole(@PathVariable UUID userId, @RequestParam UserRole newRole) {
+    public ResponseEntity<?> updateUserRole(@PathVariable UUID userId, @RequestParam UserRole newRole) {
 
         adminService.changeUserRole(userId, newRole);
 
-        return ResponseEntity.ok("Role updated successfully");
+        return ResponseEntity.ok().body(Map.of("message", "Role updated successfully"));
     }
 }

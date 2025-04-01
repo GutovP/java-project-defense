@@ -44,7 +44,10 @@ public class SecurityConfig {
                                 "/api/v1/products/all",
                                 "/api/v1/products/{category}/{name}"
                         ).permitAll() // Public endpoints
-                        .requestMatchers("/api/v1/products/add-new-product").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(
+                                "/api/v1/products/add-new-product",
+                                "/api/v1/admin/**"
+                        ).hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
                 .httpBasic(Customizer.withDefaults())
