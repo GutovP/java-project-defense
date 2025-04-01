@@ -51,8 +51,6 @@ public class BasketService {
             BasketItem basketItem = existingItem.get();
             basketItem.setQuantity(basketItem.getQuantity() + quantity);
 
-            System.out.println("Updated basket item: " + basketItem.getProduct().getName() + " (Quantity: " + basketItem.getQuantity() + ")");
-
         } else {
             Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found."));
             BasketItem newBasketItem = new BasketItem();
@@ -60,18 +58,13 @@ public class BasketService {
             newBasketItem.setQuantity(quantity);
             newBasketItem.setBasket(basket);
             basket.getItems().add(newBasketItem);
-
-            System.out.println("Added new basket item: " + newBasketItem.getProduct().getName() + " (Quantity: " + newBasketItem.getQuantity() + ")");
         }
 
         BigDecimal updatedTotalPrice = calculateTotalPrice(basket);
         basket.setTotalPrice(updatedTotalPrice);
         basket.setUpdatedAt(LocalDateTime.now());
-        Basket savedBasket = basketRepository.save(basket);
 
-        System.out.println("Basket saved with " + savedBasket.getItems().size() + " items. Total Price: " + savedBasket.getTotalPrice());
-
-        return savedBasket;
+        return basketRepository.save(basket);
     }
 
     public BigDecimal calculateTotalPrice(Basket basket) {

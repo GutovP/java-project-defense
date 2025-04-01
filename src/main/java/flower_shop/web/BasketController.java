@@ -48,14 +48,16 @@ public class BasketController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addToBasket(@RequestBody BasketRequest basketRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<BasketResponse> addToBasket(@RequestBody BasketRequest basketRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
 
-        basketService.addToBasket( user, basketRequest.getProductId(), basketRequest.getQuantity());
+        Basket basket = basketService.addToBasket(user, basketRequest.getProductId(), basketRequest.getQuantity());
 
-        return ResponseEntity.ok("Item added to basket");
+        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{productId}/quantity")

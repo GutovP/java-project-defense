@@ -18,6 +18,7 @@ public class DtoMapper {
                         item.getId(),
                         item.getProduct().getName(),
                         item.getProduct().getSalePrice(),
+                        item.getProduct().getImage(),
                         item.getQuantity(),
                         item.getProduct().getSalePrice().multiply(BigDecimal.valueOf(item.getQuantity()))
 

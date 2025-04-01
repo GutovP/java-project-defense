@@ -18,6 +18,8 @@ public class BasketItemResponse {
 
     private BigDecimal productPrice;
 
+    private String image;
+
     private int quantity;
 
     private BigDecimal itemTotalPrice;
