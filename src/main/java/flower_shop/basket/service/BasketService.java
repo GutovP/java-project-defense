@@ -4,6 +4,7 @@ import flower_shop.basket.model.Basket;
 import flower_shop.basket.model.BasketItem;
 import flower_shop.basket.repository.BasketItemRepository;
 import flower_shop.basket.repository.BasketRepository;
+import flower_shop.exception.NotEnoughInStockException;
 import flower_shop.exception.ProductNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
@@ -43,6 +44,13 @@ public class BasketService {
             return basketRepository.save(newBasket);
         });
 
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
+
+        if (product.getCurrentQuantity() < quantity) {
+            throw new NotEnoughInStockException("Not enough stock available.");
+        }
+
         Optional<BasketItem> existingItem = basket.getItems().stream()
                 .filter(basketItem -> basketItem.getProduct().getId().equals(productId))
                 .findFirst();
@@ -52,13 +60,16 @@ public class BasketService {
             basketItem.setQuantity(basketItem.getQuantity() + quantity);
 
         } else {
-            Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found."));
             BasketItem newBasketItem = new BasketItem();
             newBasketItem.setProduct(product);
             newBasketItem.setQuantity(quantity);
             newBasketItem.setBasket(basket);
             basket.getItems().add(newBasketItem);
+            basketItemRepository.save(newBasketItem);
         }
+
+        product.setCurrentQuantity(product.getCurrentQuantity() - quantity);
+        productRepository.save(product);
 
         BigDecimal updatedTotalPrice = calculateTotalPrice(basket);
         basket.setTotalPrice(updatedTotalPrice);
@@ -78,12 +89,26 @@ public class BasketService {
         return basketItem.getProduct().getSalePrice().multiply(BigDecimal.valueOf(basketItem.getQuantity()));
     }
 
+
     public Basket updateBasketItemQuantity(User user, UUID basketItemId, int newQuantity) {
 
         Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Basket not found."));
 
         BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(() -> new RuntimeException("BasketItem not found."));
+
+        Product product = basketItem.getProduct();
+        int oldQuantity = basketItem.getQuantity();
+        int quantityDifference = newQuantity - oldQuantity;
+
+        if (quantityDifference > 0 && product.getCurrentQuantity() < quantityDifference) {
+            throw new NotEnoughInStockException("Not enough stock available.");
+        }
+
+        product.setCurrentQuantity(product.getCurrentQuantity() - quantityDifference);
+        productRepository.save(product);
+
         basketItem.setQuantity(newQuantity);
+        basketItemRepository.save(basketItem);
 
         BigDecimal updatedTotalPrice = calculateTotalPrice(basket);
         basket.setTotalPrice(updatedTotalPrice);
