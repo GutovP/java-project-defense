@@ -4,6 +4,7 @@ package flower_shop.web;
 import flower_shop.basket.model.Basket;
 import flower_shop.basket.repository.BasketRepository;
 import flower_shop.basket.service.BasketService;
+import flower_shop.exception.BasketNotFoundException;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.BasketRequest;
@@ -40,7 +41,7 @@ public class BasketController {
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
 
-        Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Basket not found"));
+        Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new BasketNotFoundException("Basket not found"));
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
 
