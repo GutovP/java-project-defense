@@ -4,6 +4,7 @@ import flower_shop.basket.model.Basket;
 import flower_shop.basket.model.BasketItem;
 import flower_shop.basket.repository.BasketItemRepository;
 import flower_shop.basket.repository.BasketRepository;
+import flower_shop.exception.BasketItemNotFoundException;
 import flower_shop.exception.BasketNotFoundException;
 import flower_shop.exception.NotEnoughInStockException;
 import flower_shop.exception.ProductNotFoundException;
@@ -95,7 +96,7 @@ public class BasketService {
 
         Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new BasketNotFoundException("Basket not found."));
 
-        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(() -> new RuntimeException("BasketItem not found."));
+        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(() -> new BasketItemNotFoundException("BasketItem not found."));
 
         Product product = basketItem.getProduct();
         int oldQuantity = basketItem.getQuantity();
@@ -124,7 +125,7 @@ public class BasketService {
                 .orElseThrow(() -> new BasketNotFoundException("Basket not found."));
 
         BasketItem basketItem = basketItemRepository.findById(basketItemId)
-                .orElseThrow(() -> new RuntimeException("BasketItem not found."));
+                .orElseThrow(() -> new BasketItemNotFoundException("BasketItem not found."));
 
         Product product = basketItem.getProduct();
         product.setCurrentQuantity(product.getCurrentQuantity() + basketItem.getQuantity());
