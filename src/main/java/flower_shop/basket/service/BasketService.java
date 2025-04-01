@@ -117,4 +117,27 @@ public class BasketService {
         return basketRepository.save(basket);
     }
 
+    public Basket removeBasketItem(User user, UUID basketItemId) {
+
+        Basket basket = basketRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Basket not found."));
+
+        BasketItem basketItem = basketItemRepository.findById(basketItemId)
+                .orElseThrow(() -> new RuntimeException("BasketItem not found."));
+
+        Product product = basketItem.getProduct();
+        product.setCurrentQuantity(product.getCurrentQuantity() + basketItem.getQuantity());
+        productRepository.save(product);
+
+        basket.getItems().remove(basketItem);
+        basketItemRepository.delete(basketItem);
+
+        BigDecimal updatedTotalPrice = calculateTotalPrice(basket);
+        basket.setTotalPrice(updatedTotalPrice);
+        basket.setUpdatedAt(LocalDateTime.now());
+
+        return basketRepository.save(basket);
+    }
+
+
 }
