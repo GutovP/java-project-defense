@@ -41,4 +41,7 @@ public class Product {
 
     @Column
     private String category;
+
+    @Column
+    private int restockThreshold = 5;
 }
