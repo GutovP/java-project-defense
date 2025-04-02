@@ -75,6 +75,7 @@ public class ProductService {
                 .image(productRequest.getImage())
                 .currentQuantity(productRequest.getQuantity())
                 .category(productRequest.getCategory())
+                .restockThreshold(5)
                 .build();
 
         return productRepository.save(product);
