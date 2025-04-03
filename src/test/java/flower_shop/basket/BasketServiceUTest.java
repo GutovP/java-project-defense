@@ -52,7 +52,7 @@ class BasketServiceUTest {
 
         Basket basket = Basket.builder()
                 .user(user)
-                .items(new ArrayList<>()) // Empty basket initially
+                .items(new ArrayList<>())
                 .totalPrice(BigDecimal.ZERO)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -66,7 +66,7 @@ class BasketServiceUTest {
 
         assertNotNull(updatedBasket);
         assertEquals(1, updatedBasket.getItems().size());
-        assertEquals(BigDecimal.valueOf(100), updatedBasket.getTotalPrice()); // 50 * 2
+        assertEquals(BigDecimal.valueOf(100), updatedBasket.getTotalPrice());
         verify(productRepository).save(product);
         verify(basketItemRepository).save(any(BasketItem.class));
         verify(basketRepository).save(basket);
@@ -81,7 +81,7 @@ class BasketServiceUTest {
                 .id(productId)
                 .name("Product1")
                 .salePrice(BigDecimal.valueOf(50))
-                .currentQuantity(1) // Not enough stock
+                .currentQuantity(1)
                 .build();
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
@@ -113,7 +113,7 @@ class BasketServiceUTest {
         Basket basket = Basket.builder()
                 .user(user)
                 .items(List.of(basketItem))
-                .totalPrice(BigDecimal.valueOf(100)) // 50 * 2
+                .totalPrice(BigDecimal.valueOf(100))
                 .build();
 
         when(basketRepository.findByUser(user)).thenReturn(Optional.of(basket));
@@ -123,7 +123,7 @@ class BasketServiceUTest {
         Basket updatedBasket = basketService.updateBasketItemQuantity(user, basketItemId, 4);
 
         assertEquals(4, basketItem.getQuantity());
-        assertEquals(BigDecimal.valueOf(200), updatedBasket.getTotalPrice()); // 50 * 4
+        assertEquals(BigDecimal.valueOf(200), updatedBasket.getTotalPrice());
         verify(productRepository).save(product);
         verify(basketItemRepository).save(basketItem);
         verify(basketRepository).save(basket);
@@ -138,7 +138,7 @@ class BasketServiceUTest {
                 .id(UUID.randomUUID())
                 .name("Product1")
                 .salePrice(BigDecimal.valueOf(50))
-                .currentQuantity(1) // Not enough stock for update
+                .currentQuantity(1)
                 .build();
 
         BasketItem basketItem = BasketItem.builder()
