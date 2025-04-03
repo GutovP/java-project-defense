@@ -2,6 +2,7 @@ package flower_shop.user.service;
 
 import flower_shop.exception.AuthenticationException;
 import flower_shop.exception.UserNotFoundException;
+import flower_shop.exception.UserAlreadyExistException;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
@@ -39,7 +40,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByEmail(registerRequest.getEmail());
 
         if (optionalUser.isPresent()) {
-            throw new AuthenticationException("User already exists!");
+            throw new UserAlreadyExistException("User already exists!");
         }
 
         User user = User.builder()
@@ -101,7 +102,7 @@ public class UserService {
         User user = getUserByEmail(email);
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new RuntimeException("Current password is incorrect");
+            throw new AuthenticationException("Current password is incorrect");
         }
 
         if (newPassword != null) {
