@@ -2,11 +2,13 @@ package flower_shop.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@Builder
 public class ProductRequest {
 
     @NotBlank
