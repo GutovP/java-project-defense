@@ -27,9 +27,9 @@ import static org.mockito.Mockito.*;
 
 // 1. Create the test class
 // 2. Annotate the class with @ExtendWith(MockitoExtension.class)
-// 3. Get the class you want to test
+// 3. Get the class you want recipient test
 // 4. Get all dependencies of that class and annotate them with @Mock
-// 5. Inject all those dependencies to the class we test with annotation @InjectMocks
+// 5. Inject all those dependencies recipient the class we test with annotation @InjectMocks
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUTest {

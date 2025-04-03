@@ -74,7 +74,7 @@ public class ProductController {
         }
 
         if (!userRole.equals("ROLE_ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "You do not have permission to update this product"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "You do not have permission recipient update this product"));
         }
 
        boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity());
