@@ -37,6 +37,13 @@ public class BasketService {
 
     public Basket addToBasket(User user, UUID productId, int quantity) {
 
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
+
+        if (product.getCurrentQuantity() < quantity) {
+            throw new NotEnoughInStockException("Not enough stock available.");
+        }
+
         Basket basket = basketRepository.findByUser(user).orElseGet(() -> {
             Basket newBasket = new Basket();
             newBasket.setUser(user);
@@ -45,13 +52,6 @@ public class BasketService {
             newBasket.setTotalPrice(BigDecimal.ZERO);
             return basketRepository.save(newBasket);
         });
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
-
-        if (product.getCurrentQuantity() < quantity) {
-            throw new NotEnoughInStockException("Not enough stock available.");
-        }
 
         Optional<BasketItem> existingItem = basket.getItems().stream()
                 .filter(basketItem -> basketItem.getProduct().getId().equals(productId))
