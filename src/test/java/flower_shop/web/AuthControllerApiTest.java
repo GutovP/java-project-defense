@@ -41,8 +41,8 @@ public class AuthControllerApiTest {
     @Test
     void shouldRegisterUserSuccessfully() throws Exception {
         RegisterRequest request = RegisterRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Petar")
+                .lastName("Gutov")
                 .email("admin@google.com")
                 .password("securepassword")
                 .build();
