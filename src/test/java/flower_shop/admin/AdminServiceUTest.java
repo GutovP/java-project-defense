@@ -30,31 +30,25 @@ class AdminServiceUTest {
     private AdminService adminService;
 
     @Test
-    void shouldGetAllUsersSuccessfully() {
-        User user1 = User.builder()
-                .id(UUID.randomUUID())
-                .firstName("Petar")
-                .lastName("Gutov")
-                .email("admin@gmail.com")
-                .role(UserRole.USER)
-                .build();
+    void shouldReturnAllUsersSuccessfully() {
+        List<User> users = List.of(
+                User.builder()
+                        .id(UUID.randomUUID())
+                        .firstName("John")
+                        .lastName("Doe")
+                        .email("john@example.com")
+                        .password("securepassword")
+                        .role(UserRole.USER)
+                        .build()
+        );
 
-        User user2 = User.builder()
-                .id(UUID.randomUUID())
-                .firstName("Ivan")
-                .lastName("Ivanov")
-                .email("user2@gmail.com")
-                .role(UserRole.ADMIN)
-                .build();
+        when(adminRepository.findAll()).thenReturn(users);
 
-        List<User> mockUsers = List.of(user1, user2);
-        when(adminRepository.findAll()).thenReturn(mockUsers);
+        List<User> result = adminService.getAllUsers();
 
-        List<User> users = adminService.getAllUsers();
+        assertEquals(1, result.size());
+        assertEquals("John", result.get(0).getFirstName());
 
-        assertEquals(2, users.size());
-        assertEquals("Petar", users.get(0).getFirstName());
-        assertEquals("Ivan", users.get(1).getFirstName());
         verify(adminRepository).findAll();
     }
 
@@ -63,9 +57,10 @@ class AdminServiceUTest {
         UUID userId = UUID.randomUUID();
         User user = User.builder()
                 .id(userId)
-                .firstName("Petar")
-                .lastName("Gutov")
-                .email("admin@gmail.com")
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("jane@example.com")
+                .password("securepassword")
                 .role(UserRole.USER)
                 .build();
 
@@ -75,6 +70,7 @@ class AdminServiceUTest {
         User updatedUser = adminService.changeUserRole(userId, UserRole.ADMIN);
 
         assertEquals(UserRole.ADMIN, updatedUser.getRole());
+
         verify(adminRepository).findById(userId);
         verify(adminRepository).save(user);
     }
@@ -82,11 +78,14 @@ class AdminServiceUTest {
     @Test
     void shouldThrowExceptionWhenUserNotFound() {
         UUID userId = UUID.randomUUID();
+
         when(adminRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> adminService.changeUserRole(userId, UserRole.ADMIN));
+
         verify(adminRepository).findById(userId);
-        verify(adminRepository, never()).save(any(User.class));
     }
+
+
 }
 

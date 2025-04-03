@@ -2,12 +2,14 @@ package flower_shop.user;
 
 import flower_shop.exception.AuthenticationException;
 import flower_shop.exception.UserAlreadyExistException;
+import flower_shop.exception.UserNotFoundException;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
+import flower_shop.web.dto.PasswordChangeRequest;
 import flower_shop.web.dto.ProfileEditRequest;
 import flower_shop.web.dto.RegisterRequest;
 import org.junit.jupiter.api.Test;
@@ -47,10 +49,8 @@ public class UserServiceUTest {
     private UserService userService;
 
 
-
     @Test
     void shouldThrowExceptionWhenUserAlreadyExists() {
-
         RegisterRequest registerRequest = RegisterRequest.builder()
                 .firstName("Petar")
                 .lastName("Gutov")
@@ -58,7 +58,7 @@ public class UserServiceUTest {
                 .password("123123")
                 .build();
 
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.of(new User()));
 
         assertThrows(UserAlreadyExistException.class, () -> userService.register(registerRequest));
 
@@ -76,8 +76,8 @@ public class UserServiceUTest {
                 .build();
 
         when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.save(any())).thenReturn(new User());
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         userService.register(registerRequest);
 
@@ -103,9 +103,11 @@ public class UserServiceUTest {
 
         Authentication authenticationMock = mock(Authentication.class);
 
+        when(authenticationManager.authenticate(any())).thenReturn(authenticationMock);
+        when(authenticationMock.isAuthenticated()).thenReturn(true);
+
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())).thenReturn(true);
-        when(authenticationMock.isAuthenticated()).thenReturn(true);
         when(authenticationManager.authenticate(any())).thenReturn(authenticationMock);
         when(jwtService.generateToken(loginRequest.getEmail(), user.getRole())).thenReturn("mockJwtToken");
 
@@ -119,10 +121,25 @@ public class UserServiceUTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenUserNotFoundDuringLogin() {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("nonexistent@gmail.com")
+                .password("123456")
+                .build();
+
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.loginAndAuthenticate(loginRequest));
+
+        verify(userRepository).findByEmail(loginRequest.getEmail());
+        verify(authenticationManager, never()).authenticate(any());
+    }
+
+    @Test
     void shouldThrowExceptionWhenPasswordIsIncorrect() {
         LoginRequest loginRequest = LoginRequest.builder()
                 .email("admin@gmail.com")
-                .password("1234567")
+                .password("wrongpassword")
                 .build();
 
         User user = User.builder()
@@ -162,7 +179,7 @@ public class UserServiceUTest {
                 .build();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User updatedUser = userService.updateUserProfile(email, profileEditRequest);
 
@@ -172,6 +189,55 @@ public class UserServiceUTest {
         verify(userRepository).findByEmail(email);
         verify(userRepository).save(any(User.class));
     }
+
+    @Test
+    void shouldThrowExceptionWhenUpdatingProfileOfNonexistentUser() {
+        String email = "nonexistent@gmail.com";
+
+        ProfileEditRequest profileEditRequest = ProfileEditRequest.builder()
+                .firstName("New")
+                .lastName("Name")
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.updateUserProfile(email, profileEditRequest));
+
+        verify(userRepository).findByEmail(email);
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldChangeUserPasswordSuccessfully() {
+        String email = "admin@gmail.com";
+        PasswordChangeRequest passwordChangeRequest = PasswordChangeRequest.builder()
+                .currentPassword("123123")
+                .newPassword("newPassword")
+                .build();
+
+        User user = User.builder()
+                .firstName("Petar")
+                .lastName("Gutov")
+                .email(email)
+                .password("hashedPassword")
+                .role(UserRole.USER)
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(passwordChangeRequest.getCurrentPassword(), user.getPassword())).thenReturn(true);
+        when(passwordEncoder.encode(passwordChangeRequest.getNewPassword())).thenReturn("newEncodedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
+
+        assertEquals("newEncodedPassword", user.getPassword());
+
+        verify(userRepository).findByEmail(email);
+
+        verify(passwordEncoder).encode(passwordChangeRequest.getNewPassword());
+        verify(userRepository).save(any(User.class));
+    }
+
 
 
 }

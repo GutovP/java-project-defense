@@ -105,8 +105,11 @@ public class UserService {
             throw new AuthenticationException("Current password is incorrect");
         }
 
-        if (newPassword != null) {
+        if (newPassword != null && !newPassword.isBlank()) {
             user.setPassword(passwordEncoder.encode(newPassword));
+
+        } else {
+            throw new AuthenticationException("New password cannot be empty");
         }
 
         userRepository.save(user);
