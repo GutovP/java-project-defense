@@ -2,6 +2,7 @@ package flower_shop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import flower_shop.user.model.User;
+import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.web.dto.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,15 +34,15 @@ public class UserRegistrationITest {
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll(); // ✅ Clean database before each test
+        userRepository.deleteAll();
     }
 
     @Test
     void shouldRegisterUserSuccessfully() throws Exception {
         RegisterRequest registerRequest = RegisterRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john@example.com")
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .email("admin@gmail.com")
                 .password("securepassword")
                 .build();
 
@@ -50,23 +51,24 @@ public class UserRegistrationITest {
                         .content(new ObjectMapper().writeValueAsString(registerRequest)))
                 .andExpect(status().isCreated());
 
-        assertTrue(userRepository.findByEmail(registerRequest.getEmail()).isPresent()); // ✅ Verify persistence in H2 DB
+        assertTrue(userRepository.findByEmail(registerRequest.getEmail()).isPresent());
     }
 
     @Test
     void shouldNotRegisterUserWithExistingEmail() throws Exception {
         User existingUser = User.builder()
-                .firstName("Jane")
-                .lastName("Doe")
-                .email("john@example.com")
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .email("admin@gmail.com")
                 .password("securepassword")
+                .role(UserRole.USER)
                 .build();
-        userRepository.save(existingUser); // ✅ Insert user in H2 before test
+        userRepository.save(existingUser);
 
         RegisterRequest request = RegisterRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john@example.com") // Duplicate email
+                .firstName("Pesho")
+                .lastName("Peshev")
+                .email("admin@gmail.com")
                 .password("securepassword")
                 .build();
 
@@ -75,7 +77,5 @@ public class UserRegistrationITest {
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
-
-
 
 }

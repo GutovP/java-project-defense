@@ -29,7 +29,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<ProductResponse> getAllProducts() {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
