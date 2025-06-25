@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
@@ -82,6 +83,15 @@ public class ProductController {
     public Product addNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
         return productService.addNewProduct(productRequest);
+    }
+
+    @DeleteMapping("/{productId}/remove")
+    @PreAuthorize("hasRole('ADMIN')")
+    public  ResponseEntity<Void> removeProduct(@PathVariable UUID productId) {
+
+        productService.removeProduct(productId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

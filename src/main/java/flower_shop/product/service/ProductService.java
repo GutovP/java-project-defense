@@ -123,15 +123,15 @@ public class ProductService {
         return productRepository.findAllCategories();
     }
 
-    public void removeProduct(UUID productId, UserRole userRole) {
+    public void removeProduct(UUID productId) {
 
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
         if (optionalProduct.isPresent()) {
+
             Product product = optionalProduct.get();
-            if (userRole == UserRole.ADMIN) {
-                productRepository.delete(product);
-            }
+            productRepository.delete(product);
+
         }
     }
 }
