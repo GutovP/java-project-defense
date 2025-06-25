@@ -101,7 +101,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public void changeUserPassword(String email, String currentPassword, String newPassword) {
+    public User changeUserPassword(String email, String currentPassword, String newPassword) {
         User user = getUserByEmail(email);
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
@@ -115,7 +115,7 @@ public class UserService implements UserDetailsService {
             throw new AuthenticationException("New password cannot be empty");
         }
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package flower_shop.web;
 
+import flower_shop.security.AuthenticationMetadata;
 import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.PasswordChangeRequest;
@@ -28,8 +29,9 @@ public class ProfileEditController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        String email = userDetails.getUsername();
+    public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal AuthenticationMetadata  authenticationMetadata) {
+
+        String email = authenticationMetadata.getUsername();
         User user = userService.getUserByEmail(email);
         ProfileResponse profileResponse = new ProfileResponse(user);
 
@@ -37,39 +39,24 @@ public class ProfileEditController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<User> updateProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid ProfileEditRequest profileEditRequest) {
-        String email = userDetails.getUsername();
-        User updatedUser = userService.updateUserProfile(email, profileEditRequest);
+    public ResponseEntity<ProfileResponse> updateProfile(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata, @RequestBody @Valid ProfileEditRequest profileEditRequest) {
 
-        return ResponseEntity.ok(updatedUser);
+        String email = authenticationMetadata.getUsername();
+        User updatedUser = userService.updateUserProfile(email, profileEditRequest);
+        ProfileResponse profileResponse = new ProfileResponse(updatedUser);
+
+        return ResponseEntity.ok(profileResponse);
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
-        String email = userDetails.getUsername();
+    public ResponseEntity<ProfileResponse> changePassword(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata, @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
 
-        userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
+        String email = authenticationMetadata.getUsername();
 
-        return ResponseEntity.ok().body(Map.of("message", "Password changed successfully"));
+        User changedUserPassword = userService.changeUserPassword(email, passwordChangeRequest.getCurrentPassword(), passwordChangeRequest.getNewPassword());
+        ProfileResponse profileResponse = new ProfileResponse(changedUserPassword);
+
+        return ResponseEntity.ok(profileResponse);
     }
-
-//    @GetMapping("/validate-token")
-//    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
-//        if (token == null || !token.startsWith("Bearer ")) {
-//            throw new InvalidTokenException("Invalid token format");
-//        }
-//
-//        token = token.substring(7);
-//
-//        String email = jwtService.extractEmail(token);
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-//
-//        if (jwtService.validateToken(token, userDetails)) {
-//            return ResponseEntity.ok().body("Token is valid");
-//
-//        } else {
-//            throw new TokenExpiredException("Token is expired");
-//        }
-//    }
 
 }
