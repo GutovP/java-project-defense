@@ -11,14 +11,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Map;
+
 
 import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
@@ -40,6 +36,11 @@ public class ProductController {
         return productService.getAllProducts(userRole);
     }
 
+    @GetMapping("/categories")
+    public List<String> getAllCategories() {
+
+        return productService.getAllCategories();
+    }
 
     @GetMapping("/{category}/{name}")
     public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
