@@ -2,6 +2,8 @@ package flower_shop.web;
 
 import flower_shop.product.model.Product;
 import flower_shop.product.service.ProductService;
+import flower_shop.security.AuthenticationMetadata;
+import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
 import flower_shop.web.dto.UpdateQuantityRequest;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,65 +33,43 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts() {
+    public List<ProductResponse> getAllProducts(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        String userRole = auth.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElse("USER");
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
         return productService.getAllProducts(userRole);
     }
 
 
     @GetMapping("/{category}/{name}")
-    public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name) {
+    public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userRole = "USER";
-
-        if (auth != null && auth.getAuthorities() != null) {
-            userRole = auth.getAuthorities().stream()
-                    .findFirst()
-                    .map(GrantedAuthority::getAuthority)
-                    .orElse("USER");
-        }
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
         return productService.getProduct(category, name, userRole);
     }
 
 
     @PutMapping("/{category}/{name}")
-    public ResponseEntity<?> updateQuantity(@PathVariable String category, @PathVariable String name, @RequestBody UpdateQuantityRequest updateQuantityRequest) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateQuantity(@PathVariable String category, @PathVariable String name,
+                                               @RequestBody UpdateQuantityRequest updateQuantityRequest,
+                                               @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userRole = "USER";
+       UserRole userRole = authenticationMetadata.getUserRole();
 
-        if (auth != null && auth.getAuthorities() != null) {
-            userRole = auth.getAuthorities().stream()
-                    .findFirst()
-                    .map(GrantedAuthority::getAuthority)
-                    .orElse("USER");
-        }
-
-        if (!userRole.equals("ROLE_ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "You do not have permission recipient update this product"));
-        }
-
-       boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity());
+       boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity(),  userRole);
 
         if (isUpdated) {
-            return ResponseEntity.ok().body(Map.of("message", "Product quantity updated successfully."));
+            return ResponseEntity.status(HttpStatus.OK).build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Product not found."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
     }
 
     @PostMapping("/add-new-product")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Product addNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
         return productService.addNewProduct(productRequest);
