@@ -4,10 +4,7 @@ import flower_shop.basket.model.Basket;
 import flower_shop.basket.model.BasketItem;
 import flower_shop.basket.repository.BasketItemRepository;
 import flower_shop.basket.repository.BasketRepository;
-import flower_shop.exception.BasketItemNotFoundException;
-import flower_shop.exception.BasketNotFoundException;
-import flower_shop.exception.NotEnoughInStockException;
-import flower_shop.exception.ProductNotFoundException;
+import flower_shop.exception.*;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.User;
@@ -139,6 +136,9 @@ public class BasketService {
         return basketRepository.save(basket);
     }
 
+    public Basket findUserBasket(User user) {
 
+        return basketRepository.findByUser(user).orElseThrow(() -> new BasketNotFoundException("Basket not found."));
+    }
 
 }
