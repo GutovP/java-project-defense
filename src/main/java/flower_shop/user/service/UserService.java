@@ -3,6 +3,7 @@ package flower_shop.user.service;
 import flower_shop.exception.AuthenticationException;
 import flower_shop.exception.UserNotFoundException;
 import flower_shop.exception.UserAlreadyExistException;
+import flower_shop.security.AuthenticationMetadata;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
@@ -14,13 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -113,6 +116,16 @@ public class UserService {
         }
 
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) {
+
+        String normalizedEmail = email.toLowerCase();
+
+        User user = getUserByEmail(normalizedEmail);
+
+        return new AuthenticationMetadata(user.getId(), email, user.getPassword(), user.getRole());
     }
 
 }
