@@ -2,7 +2,6 @@ package flower_shop.security;
 
 import flower_shop.exception.InvalidTokenException;
 import flower_shop.user.model.UserRole;
-import flower_shop.user.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

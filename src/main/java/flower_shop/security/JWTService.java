@@ -31,15 +31,18 @@ public class JWTService {
     }
 
     public String generateToken(String email, UserRole role) {
+
+        String normalisedEmail = email.toLowerCase();
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role.name());
 
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(email)
+                .subject(normalisedEmail)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiry
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1-hour expiry
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -53,7 +56,7 @@ public class JWTService {
 
     public String extractEmail(String token) {
 
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, Claims::getSubject).toLowerCase();
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
