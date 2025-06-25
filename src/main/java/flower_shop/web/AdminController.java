@@ -17,7 +17,6 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/admin")
-@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -28,15 +27,18 @@ public class AdminController {
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
 
         List<User> users = adminService.getAllUsers();
-        List<UserResponse> userResponses = users.stream().map(UserResponse::fromUserEntity).toList();
+        List<UserResponse> userResponses = users
+                .stream().map(UserResponse::fromUserEntity).toList();
 
         return ResponseEntity.ok(userResponses);
     }
 
     @PutMapping("/{userId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUserRole(@PathVariable UUID userId, @RequestParam UserRole newRole) {
 
         adminService.changeUserRole(userId, newRole);
