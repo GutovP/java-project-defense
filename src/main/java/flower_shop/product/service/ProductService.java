@@ -3,6 +3,7 @@ package flower_shop.product.service;
 import flower_shop.exception.ProductNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
+import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,29 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponse> getAllProducts(String userRole) {
+    public List<ProductResponse> getAllProducts(UserRole userRole) {
 
         List<Product> products = productRepository.findAll();
 
         return products.stream()
-                .filter(product -> userRole.equals("ROLE_ADMIN") || product.getCurrentQuantity() > 0)
+                .filter(product -> userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0)
+                .map(product -> new ProductResponse(
+                        product.getId(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getSalePrice(),
+                        product.getCategory(),
+                        product.getImage(),
+                        product.getCurrentQuantity()
+                )).collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> getProductsByCategory(String categoryName, UserRole userRole) {
+
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .filter(product -> (userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0) && product.getCategory().equals(categoryName))
                 .map(product -> new ProductResponse(
                         product.getId(),
                         product.getName(),
