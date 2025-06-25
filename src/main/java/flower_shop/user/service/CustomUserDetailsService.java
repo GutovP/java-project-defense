@@ -1,6 +1,6 @@
 package flower_shop.user.service;
 
-import flower_shop.security.UserPrincipal;
+import flower_shop.security.AuthenticationMetadata;
 import flower_shop.user.model.User;
 import flower_shop.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         User user = optionalUser.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return new UserPrincipal(user.getId(), email, user.getPassword(), user.getRole());
+        return new AuthenticationMetadata(user.getId(), email, user.getPassword(), user.getRole());
     }
 }

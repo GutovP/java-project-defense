@@ -1,5 +1,6 @@
 package flower_shop.config;
 
+import flower_shop.security.AuthenticationMetadata;
 import flower_shop.security.JWTService;
 import flower_shop.security.JwtFilter;
 import flower_shop.user.repository.UserRepository;

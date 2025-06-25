@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class UserPrincipal implements UserDetails {
+public class AuthenticationMetadata implements UserDetails {
 
     private UUID userId;
     private String email;
@@ -23,7 +23,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.userRole));
+
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.userRole.name()));
     }
 
     @Override
