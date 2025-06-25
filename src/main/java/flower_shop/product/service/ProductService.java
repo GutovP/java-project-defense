@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,5 +121,17 @@ public class ProductService {
     public List<String> getAllCategories() {
 
         return productRepository.findAllCategories();
+    }
+
+    public void removeProduct(UUID productId, UserRole userRole) {
+
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            if (userRole == UserRole.ADMIN) {
+                productRepository.delete(product);
+            }
+        }
     }
 }
