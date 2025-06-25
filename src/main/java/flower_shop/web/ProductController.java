@@ -42,6 +42,14 @@ public class ProductController {
         return productService.getAllCategories();
     }
 
+    @GetMapping("/{category}")
+    public List<ProductResponse> getProductsByCategory(@PathVariable String category, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
+
+        return productService.getProductsByCategory(category, userRole);
+    }
+
     @GetMapping("/{category}/{name}")
     public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
