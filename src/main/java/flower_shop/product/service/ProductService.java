@@ -1,5 +1,6 @@
 package flower_shop.product.service;
 
+import flower_shop.exception.AuthorizationDeniedException;
 import flower_shop.exception.ProductNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
@@ -57,7 +58,7 @@ public class ProductService {
                 )).collect(Collectors.toList());
     }
 
-    public List<ProductResponse> getProduct(String categoryName, String productName, String userRole) {
+    public List<ProductResponse> getProduct(String categoryName, String productName, UserRole userRole) {
 
         Optional<Product> optionalProduct = productRepository.findByName(productName);
 
@@ -67,7 +68,7 @@ public class ProductService {
 
             if (product.getCategory() != null && product.getCategory().equals(categoryName)) {
 
-                int showQuantity = userRole.equals("ROLE_ADMIN") ? product.getCurrentQuantity() : 0;
+                int showQuantity = userRole == UserRole.ADMIN ? product.getCurrentQuantity() : 0;
 
                 return List.of(new ProductResponse(
                         product.getId(),
@@ -99,9 +100,13 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public boolean updateProductQuantity(String category, String productName, int newQuantity) {
+    public boolean updateProductQuantity(String category, String productName, int newQuantity, UserRole userRole) {
 
         Optional<Product> optionalProduct = productRepository.findByCategoryAndName(category, productName);
+
+        if (userRole != UserRole.ADMIN) {
+            throw new AuthorizationDeniedException("You do not have permission to update this product");
+        }
 
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
