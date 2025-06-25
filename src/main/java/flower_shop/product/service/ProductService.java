@@ -116,4 +116,9 @@ public class ProductService {
         }
         return false;
     }
+
+    public List<String> getAllCategories() {
+
+        return productRepository.findAllCategories();
+    }
 }
