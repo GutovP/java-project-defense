@@ -11,11 +11,9 @@ import flower_shop.exception.ProductNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.User;
-import flower_shop.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -29,7 +27,7 @@ public class BasketService {
     private final BasketItemRepository basketItemRepository;
 
     @Autowired
-    public BasketService(ProductRepository productRepository, BasketRepository basketRepository, BasketItemRepository basketItemRepository, UserRepository userRepository) {
+    public BasketService(ProductRepository productRepository, BasketRepository basketRepository, BasketItemRepository basketItemRepository) {
         this.productRepository = productRepository;
         this.basketRepository = basketRepository;
         this.basketItemRepository = basketItemRepository;
@@ -140,6 +138,7 @@ public class BasketService {
 
         return basketRepository.save(basket);
     }
+
 
 
 }
