@@ -1,36 +1,39 @@
 package flower_shop.security;
 
-import flower_shop.user.model.User;
-import lombok.Getter;
+import flower_shop.user.model.UserRole;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
-@Getter
+@Data
+@AllArgsConstructor
 public class UserPrincipal implements UserDetails {
 
-    private final User user;
+    private UUID userId;
+    private String email;
+    private String password;
+    private UserRole userRole;
 
-    public UserPrincipal(User user) {
-        this.user = user;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.userRole));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return this.email;
     }
 
 

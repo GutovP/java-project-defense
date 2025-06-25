@@ -25,7 +25,7 @@ public class EmailService {
         this.emailClient = emailClient;
     }
 
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 0 */2 * * ?")
     public void checkProducts() {
 
         List<Product> lowStockProducts = productRepository.findByCurrentQuantityLessThanThreshold();
