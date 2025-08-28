@@ -78,7 +78,7 @@ public class ProductController {
 
     }
 
-    @PostMapping("/new-product")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public Product addNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
