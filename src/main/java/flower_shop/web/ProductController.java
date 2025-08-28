@@ -85,7 +85,7 @@ public class ProductController {
         return productService.addNewProduct(productRequest);
     }
 
-    @DeleteMapping("/{productId}/remove")
+    @DeleteMapping("/{productId}")
     @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<Void> removeProduct(@PathVariable UUID productId) {
 
