@@ -20,5 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product p WHERE p.currentQuantity <= p.restockThreshold")
     List<Product> findByCurrentQuantityLessThanThreshold();
 
+    @Query("SELECT DISTINCT p.category FROM Product p")
     List<String> findAllCategories();
 }
