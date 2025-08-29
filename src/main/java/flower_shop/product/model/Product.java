@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.hibernate.annotations.SQLRestriction;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@SQLRestriction("inactive = false")
 public class Product {
 
     @Id
@@ -44,4 +45,7 @@ public class Product {
 
     @Column(nullable = false)
     private Integer restockThreshold = 5;
+
+    @Column(nullable = false)
+    private Boolean inactive = false;
 }

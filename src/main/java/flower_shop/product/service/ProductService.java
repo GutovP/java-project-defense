@@ -130,7 +130,8 @@ public class ProductService {
         if (optionalProduct.isPresent()) {
 
             Product product = optionalProduct.get();
-            productRepository.delete(product);
+            product.setInactive(true);
+            productRepository.save(product);
 
         }
     }
