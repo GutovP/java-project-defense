@@ -22,7 +22,6 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 public class BasketController {
 
     private final BasketService basketService;
-
     private final UserService userService;
 
     @Autowired
@@ -31,7 +30,7 @@ public class BasketController {
         this.userService = userService;
     }
 
-    @GetMapping("/view")
+    @GetMapping
     public ResponseEntity<BasketResponse> viewBasket(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         String email = authenticationMetadata.getUsername();
@@ -44,7 +43,7 @@ public class BasketController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<BasketResponse> addToBasket(@RequestBody BasketRequest basketRequest, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         String email = authenticationMetadata.getUsername();
@@ -70,7 +69,7 @@ public class BasketController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{basketItemId}/remove")
+    @DeleteMapping("/{basketItemId}")
     public ResponseEntity<BasketResponse> removeFromBasket(@PathVariable UUID basketItemId, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         String email = authenticationMetadata.getUsername();
