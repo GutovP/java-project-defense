@@ -5,6 +5,7 @@ import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,18 +32,20 @@ public class AdminController {
     public ResponseEntity<List<UserResponse>> getAllUsers() {
 
         List<User> users = adminService.getAllUsers();
-        List<UserResponse> userResponses = users
-                .stream().map(UserResponse::fromUserEntity).toList();
+        List<UserResponse> usersResponse = users
+                .stream()
+                .map(UserResponse::fromUserEntity)
+                .toList();
 
-        return ResponseEntity.ok(userResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(usersResponse);
     }
 
     @PutMapping("/{userId}/role")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUserRole(@PathVariable UUID userId, @RequestParam UserRole newRole) {
+    public ResponseEntity<Void> updateUserRole(@PathVariable UUID userId, @RequestParam UserRole newRole) {
 
         adminService.changeUserRole(userId, newRole);
 
-        return ResponseEntity.ok().body(Map.of("message", "Role updated successfully"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
