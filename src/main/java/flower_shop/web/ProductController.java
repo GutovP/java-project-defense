@@ -44,11 +44,13 @@ public class ProductController {
     }
 
     @GetMapping("/{category}")
-    public List<ProductResponse> getProductsByCategory(@PathVariable String category, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+    public ResponseEntity<List<ProductResponse>> getProductsByCategory(@PathVariable String category, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
-        return productService.getProductsByCategory(category, userRole);
+        List<ProductResponse> products = productService.getProductsByCategory(category, userRole);
+
+       return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
     @GetMapping("/{category}/{name}")
