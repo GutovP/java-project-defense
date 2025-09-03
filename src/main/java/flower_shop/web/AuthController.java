@@ -40,7 +40,7 @@ public class AuthController {
         User user = userService.getUserByEmail(loginRequest.getEmail());
         LoginResponse loginResponse = new LoginResponse(token, user);
 
-        return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
 
 }
