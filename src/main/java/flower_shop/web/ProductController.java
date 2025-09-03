@@ -80,9 +80,11 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Product addNewProduct(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<Product> createNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
-        return productService.addNewProduct(productRequest);
+        productService.createNewProduct(productRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{productId}")

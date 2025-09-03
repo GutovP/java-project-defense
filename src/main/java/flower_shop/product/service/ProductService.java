@@ -86,7 +86,7 @@ public class ProductService {
         throw new ProductNotFoundException("Product not found in the specified category");
     }
 
-    public Product addNewProduct(ProductRequest productRequest) {
+    public Product createNewProduct(ProductRequest productRequest) {
 
         Product product = Product.builder()
                 .name(productRequest.getName())

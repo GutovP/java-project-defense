@@ -13,7 +13,7 @@ public class DtoMapper {
 
     public static BasketResponse mapBasketToBasketResponse(Basket basket) {
 
-        List<BasketItemResponse> itemResponses = basket.getItems().stream()
+        List<BasketItemResponse> itemsResponse = basket.getItems().stream()
                 .map( item -> new BasketItemResponse(
                         item.getId(),
                         item.getProduct().getName(),
@@ -24,6 +24,6 @@ public class DtoMapper {
 
                 )).toList();
 
-        return new BasketResponse(itemResponses, basket.getTotalPrice());
+        return new BasketResponse(itemsResponse, basket.getTotalPrice());
     }
 }
