@@ -9,6 +9,7 @@ import flower_shop.web.dto.BasketRequest;
 import flower_shop.web.dto.BasketResponse;
 import flower_shop.web.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class BasketController {
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
@@ -53,7 +54,7 @@ public class BasketController {
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("{productId}/quantity")
@@ -66,7 +67,7 @@ public class BasketController {
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{basketItemId}")
@@ -78,7 +79,8 @@ public class BasketController {
         Basket basket = basketService.removeBasketItem(user, basketItemId);
 
         BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
