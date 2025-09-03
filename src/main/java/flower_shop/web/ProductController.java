@@ -52,11 +52,13 @@ public class ProductController {
     }
 
     @GetMapping("/{category}/{name}")
-    public List<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+    public ResponseEntity<List<ProductResponse>> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
-        return productService.getProduct(category, name, userRole);
+        List<ProductResponse> product = productService.getProduct(category, name, userRole);
+
+        return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
 
@@ -82,9 +84,9 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> createNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
-        productService.createNewProduct(productRequest);
+        Product product = productService.createNewProduct(productRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
     @DeleteMapping("/{productId}")
