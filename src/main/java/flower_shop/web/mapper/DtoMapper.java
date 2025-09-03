@@ -1,8 +1,10 @@
 package flower_shop.web.mapper;
 
 import flower_shop.basket.model.Basket;
+import flower_shop.product.model.Product;
 import flower_shop.web.dto.BasketItemResponse;
 import flower_shop.web.dto.BasketResponse;
+import flower_shop.web.dto.ProductResponse;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -11,7 +13,7 @@ import java.util.List;
 @UtilityClass
 public class DtoMapper {
 
-    public static BasketResponse mapBasketToBasketResponse(Basket basket) {
+    public static BasketResponse toBasketResponse(Basket basket) {
 
         List<BasketItemResponse> itemsResponse = basket.getItems().stream()
                 .map( item -> new BasketItemResponse(
@@ -25,5 +27,18 @@ public class DtoMapper {
                 )).toList();
 
         return new BasketResponse(itemsResponse, basket.getTotalPrice());
+    }
+
+    public static ProductResponse toProductResponse(Product product) {
+
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .salePrice(product.getSalePrice())
+                .categoryName(product.getCategory())
+                .image(product.getImage())
+                .currentQuantity(product.getCurrentQuantity())
+                .build();
     }
 }

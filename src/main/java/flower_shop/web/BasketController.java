@@ -39,7 +39,7 @@ public class BasketController {
 
         Basket basket = basketService.findUserBasket(user);
 
-        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+        BasketResponse response = DtoMapper.toBasketResponse(basket);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -52,7 +52,7 @@ public class BasketController {
 
         Basket basket = basketService.addToBasket(user, basketRequest.getProductId(), basketRequest.getQuantity());
 
-        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+        BasketResponse response = DtoMapper.toBasketResponse(basket);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -65,7 +65,7 @@ public class BasketController {
 
         Basket basket = basketService.updateBasketItemQuantity(user, productId, newQuantity);
 
-        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+        BasketResponse response = DtoMapper.toBasketResponse(basket);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -78,7 +78,7 @@ public class BasketController {
 
         Basket basket = basketService.removeBasketItem(user, basketItemId);
 
-        BasketResponse response = DtoMapper.mapBasketToBasketResponse(basket);
+        BasketResponse response = DtoMapper.toBasketResponse(basket);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
