@@ -6,7 +6,6 @@ import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.ProductRequest;
-import flower_shop.web.dto.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,65 +24,31 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponse> getAllProducts(UserRole userRole) {
+    public List<Product> getAllProducts(UserRole userRole) {
 
         List<Product> products = productRepository.findAll();
 
         return products.stream()
                 .filter(product -> userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0)
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getDescription(),
-                        product.getSalePrice(),
-                        product.getCategory(),
-                        product.getImage(),
-                        product.getCurrentQuantity()
-                )).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
-    public List<ProductResponse> getProductsByCategory(String categoryName, UserRole userRole) {
+    public List<Product> getProductsByCategory(String categoryName, UserRole userRole) {
 
         List<Product> products = productRepository.findAll();
 
         return products.stream()
                 .filter(product -> (userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0) && product.getCategory().equals(categoryName))
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getDescription(),
-                        product.getSalePrice(),
-                        product.getCategory(),
-                        product.getImage(),
-                        product.getCurrentQuantity()
-                )).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
-    public List<ProductResponse> getProduct(String categoryName, String productName, UserRole userRole) {
+    public Product getProduct(String categoryName, String productName) {
 
-        Optional<Product> optionalProduct = productRepository.findByName(productName);
+        return productRepository.findByName(productName)
+                .filter(product -> product.getCategory() != null && product.getCategory().equals(categoryName))
+                .orElseThrow(() -> new ProductNotFoundException("Product not found in the specified category"));
 
-        if (optionalProduct.isPresent()) {
 
-            Product product = optionalProduct.get();
-
-            if (product.getCategory() != null && product.getCategory().equals(categoryName)) {
-
-                int showQuantity = userRole == UserRole.ADMIN ? product.getCurrentQuantity() : 0;
-
-                return List.of(new ProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getDescription(),
-                        product.getSalePrice(),
-                        product.getCategory(),
-                        product.getImage(),
-                        showQuantity
-                ));
-            }
-        }
-
-        throw new ProductNotFoundException("Product not found in the specified category");
     }
 
     public Product createNewProduct(ProductRequest productRequest) {
