@@ -42,10 +42,11 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Product getProduct(String categoryName, String productName) {
+    public Product getProduct(String categoryName, String productName,  UserRole userRole) {
 
         return productRepository.findByName(productName)
                 .filter(product -> product.getCategory() != null && product.getCategory().equals(categoryName))
+                .filter(product -> userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found in the specified category"));
 
 
@@ -61,9 +62,12 @@ public class ProductService {
                 .currentQuantity(productRequest.getQuantity())
                 .category(productRequest.getCategory())
                 .restockThreshold(5)
+                .inactive(false)
                 .build();
 
-        return productRepository.save(product);
+        productRepository.save(product);
+
+        return product;
     }
 
     public boolean updateProductQuantity(String category, String productName, int newQuantity, UserRole userRole) {

@@ -7,6 +7,7 @@ import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
 import flower_shop.web.dto.UpdateQuantityRequest;
+import flower_shop.web.mapper.DtoMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,11 @@ public class ProductController {
 
         UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
-        List<ProductResponse> products = productService.getAllProducts(userRole);
+        List<ProductResponse> productsResponse = productService.getAllProducts(userRole).stream()
+                .map(DtoMapper::toProductResponse)
+                .toList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        return ResponseEntity.status(HttpStatus.OK).body(productsResponse);
     }
 
     @GetMapping("/categories")
@@ -52,19 +55,23 @@ public class ProductController {
 
         UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
-        List<ProductResponse> products = productService.getProductsByCategory(category, userRole);
+        List<ProductResponse> productsResponse = productService.getProductsByCategory(category, userRole).stream()
+                .map(DtoMapper::toProductResponse)
+                .toList();
 
-       return ResponseEntity.status(HttpStatus.OK).body(products);
+       return ResponseEntity.status(HttpStatus.OK).body(productsResponse);
     }
 
     @GetMapping("/{category}/{name}")
-    public ResponseEntity<List<ProductResponse>> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
         UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
 
-        List<ProductResponse> product = productService.getProduct(category, name, userRole);
+        Product product = productService.getProduct(category, name, userRole);
 
-        return ResponseEntity.status(HttpStatus.OK).body(product);
+        ProductResponse productResponse = DtoMapper.toProductResponse(product);
+
+        return ResponseEntity.status(HttpStatus.OK).body(productResponse);
     }
 
 
@@ -88,11 +95,13 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> createNewProduct(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> createNewProduct(@RequestBody @Valid ProductRequest productRequest) {
 
         Product product = productService.createNewProduct(productRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        ProductResponse productResponse = DtoMapper.toProductResponse(product);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
     @DeleteMapping("/{productId}")
