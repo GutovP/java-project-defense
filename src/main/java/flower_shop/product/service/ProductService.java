@@ -1,7 +1,7 @@
 package flower_shop.product.service;
 
 import flower_shop.exception.AuthorizationDeniedException;
-import flower_shop.exception.ProductNotFoundException;
+import flower_shop.exception.ResourceNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.UserRole;
@@ -47,7 +47,7 @@ public class ProductService {
         return productRepository.findByName(productName)
                 .filter(product -> product.getCategory() != null && product.getCategory().equals(categoryName))
                 .filter(product -> userRole == UserRole.ADMIN || product.getCurrentQuantity() > 0)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found in the specified category"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in the specified category"));
 
 
     }

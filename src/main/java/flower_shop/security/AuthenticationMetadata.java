@@ -16,8 +16,11 @@ import java.util.UUID;
 public class AuthenticationMetadata implements UserDetails {
 
     private UUID userId;
+
     private String email;
+
     private String password;
+
     private UserRole userRole;
 
 

@@ -1,7 +1,7 @@
 package flower_shop.user.service;
 
 import flower_shop.exception.AuthenticationException;
-import flower_shop.exception.UserNotFoundException;
+import flower_shop.exception.ResourceNotFoundException;
 import flower_shop.exception.UserAlreadyExistException;
 import flower_shop.security.AuthenticationMetadata;
 import flower_shop.security.JWTService;
@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
 
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("Email or password are incorrect.");
+            throw new ResourceNotFoundException("Email or password are incorrect.");
         }
 
         User user = optionalUser.get();
@@ -82,7 +82,7 @@ public class UserService implements UserDetailsService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     }
 
     public User updateUserProfile(String email, ProfileEditRequest profileEditRequest) {

@@ -4,7 +4,8 @@ import flower_shop.basket.model.Basket;
 import flower_shop.basket.model.BasketItem;
 import flower_shop.basket.repository.BasketItemRepository;
 import flower_shop.basket.repository.BasketRepository;
-import flower_shop.exception.*;
+import flower_shop.exception.NotEnoughInStockException;
+import flower_shop.exception.ResourceNotFoundException;
 import flower_shop.product.model.Product;
 import flower_shop.product.repository.ProductRepository;
 import flower_shop.user.model.User;
@@ -33,7 +34,7 @@ public class BasketService {
     public Basket addToBasket(User user, UUID productId, int quantity) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
 
         if (product.getCurrentQuantity() < quantity) {
             throw new NotEnoughInStockException("Not enough stock available.");
@@ -89,9 +90,9 @@ public class BasketService {
 
     public Basket updateBasketItemQuantity(User user, UUID basketItemId, int newQuantity) {
 
-        Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new BasketNotFoundException("Basket not found."));
+        Basket basket = basketRepository.findByUser(user).orElseThrow(() -> new ResourceNotFoundException("Basket not found."));
 
-        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(() -> new BasketItemNotFoundException("BasketItem not found."));
+        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(() -> new ResourceNotFoundException("BasketItem not found."));
 
         Product product = basketItem.getProduct();
         int oldQuantity = basketItem.getQuantity();
@@ -117,10 +118,10 @@ public class BasketService {
     public Basket removeBasketItem(User user, UUID basketItemId) {
 
         Basket basket = basketRepository.findByUser(user)
-                .orElseThrow(() -> new BasketNotFoundException("Basket not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Basket not found."));
 
         BasketItem basketItem = basketItemRepository.findById(basketItemId)
-                .orElseThrow(() -> new BasketItemNotFoundException("BasketItem not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("BasketItem not found."));
 
         Product product = basketItem.getProduct();
         product.setCurrentQuantity(product.getCurrentQuantity() + basketItem.getQuantity());
@@ -138,7 +139,7 @@ public class BasketService {
 
     public Basket findUserBasket(User user) {
 
-        return basketRepository.findByUser(user).orElseThrow(() -> new BasketNotFoundException("Basket not found."));
+        return basketRepository.findByUser(user).orElseThrow(() -> new ResourceNotFoundException("Basket not found."));
     }
 
 }

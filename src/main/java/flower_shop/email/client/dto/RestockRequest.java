@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmailRequest {
-
+public class RestockRequest {
 
     private String recipient;
 

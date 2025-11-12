@@ -1,6 +1,7 @@
 package flower_shop.web;
 
 import flower_shop.admin.service.AdminService;
+import flower_shop.security.AuthenticationMetadata;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.UserResponse;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +29,11 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        List<User> users = adminService.getAllUsers();
+        UserRole userRole = authenticationMetadata.getUserRole();
+
+        List<User> users = adminService.getAllUsers(userRole);
         List<UserResponse> usersResponse = users
                 .stream()
                 .map(UserResponse::fromUserEntity)
