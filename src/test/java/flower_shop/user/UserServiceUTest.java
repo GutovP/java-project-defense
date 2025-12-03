@@ -1,11 +1,14 @@
 package flower_shop.user;
 
+import flower_shop.exception.AuthenticationException;
+import flower_shop.exception.ResourceNotFoundException;
 import flower_shop.exception.UserAlreadyExistException;
 import flower_shop.security.JWTService;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.user.service.UserService;
+import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -88,5 +93,107 @@ public class UserServiceUTest {
         assertEquals("test@example.com", user.getEmail());
         assertEquals("encodedPassword", user.getPassword());
         assertEquals(UserRole.USER, user.getRole());
+    }
+
+    @Test
+    void whenUserLoginWithWrongPassword_thenExceptionIsThrown() {
+
+        // Given
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@example.com")
+                .password("wrongPassword")
+                .build();
+
+        User existingUser = User.builder()
+                .email(loginRequest.getEmail())
+                .password("encodedCorrectPassword")
+                .build();
+
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())).thenReturn(false);
+
+        // When & Then
+        assertThrows(AuthenticationException.class, () -> userService.loginAndAuthenticate(loginRequest));
+        verify(userRepository).findByEmail(loginRequest.getEmail());
+        verify(passwordEncoder).matches("wrongPassword", "encodedCorrectPassword");
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void whenUserLoginWithNonExistingEmail_thenExceptionIsThrown() {
+
+        // Given
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("nonExistingEmail@example.com")
+                .password("password")
+                .build();
+
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> userService.loginAndAuthenticate(loginRequest));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void whenUserLoginWithCorrectCredentials_thenTokenIsReturned() {
+
+        // Given
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@example.com")
+                .password("password")
+                .build();
+
+        User existingUser = User.builder()
+                .email(loginRequest.getEmail())
+                .password("encodedPassword")
+                .role(UserRole.USER)
+                .build();
+
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())).thenReturn(true);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(jwtService.generateToken(loginRequest.getEmail(), existingUser.getRole())).thenReturn("jwt-token");
+
+        // When
+        String token = userService.loginAndAuthenticate(loginRequest);
+
+        // Then
+        assertEquals("jwt-token", token);
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtService).generateToken("test@example.com", UserRole.USER);
+
+    }
+
+    @Test
+    void whenAuthenticationIsFailed_thenExceptionIsThrown() {
+
+        // Given
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@example.com")
+                .password("password")
+                .build();
+
+        User existingUser = User.builder()
+                .email(loginRequest.getEmail())
+                .password("encodedPassword")
+                .role(UserRole.USER)
+                .build();
+
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())).thenReturn(true);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(false);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+
+        // When & Then
+        assertThrows(AuthenticationException.class, () -> userService.loginAndAuthenticate(loginRequest));
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtService, never()).generateToken(anyString(), any());
+
     }
 }
