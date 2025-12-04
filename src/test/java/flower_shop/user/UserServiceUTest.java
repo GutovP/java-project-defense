@@ -196,4 +196,35 @@ public class UserServiceUTest {
         verify(jwtService, never()).generateToken(anyString(), any());
 
     }
+
+    @Test
+    void whenGetUserByEmailReturnsUser() {
+
+        // Given
+        User user = User.builder()
+                .email("test@example.com")
+                .build();
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        // When
+        userService.getUserByEmail(user.getEmail());
+
+        // Then
+        assertEquals("test@example.com", user.getEmail());
+        verify(userRepository).findByEmail("test@example.com");
+    }
+
+    @Test
+    void whenUserDoesNotExist_thenGetUserByEmailThrowsException() {
+
+        // Given
+        when(userRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserByEmail("missing@example.com"));
+    }
+
+
+
 }
