@@ -401,7 +401,7 @@ public class UserServiceUTest {
                 .role(UserRole.USER)
                 .build();
 
-        when(userRepository.findByEmail("normalized@example.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         // When
         UserDetails authenticationMetadata = userService.loadUserByUsername(email);
@@ -411,10 +411,11 @@ public class UserServiceUTest {
         AuthenticationMetadata result = (AuthenticationMetadata) authenticationMetadata;
 
         assertEquals(user.getId(), result.getUserId());
-        assertEquals(email, result.getUsername());
+        assertEquals(user.getEmail(), result.getUsername());
         assertEquals(user.getPassword(), result.getPassword());
         assertEquals(user.getRole(), result.getUserRole());
         assertThat(result.getAuthorities()).hasSize(1);
+        assertEquals("ROLE_USER", result.getAuthorities().iterator().next().getAuthority());
         verify(userRepository).findByEmail(user.getEmail());
     }
 

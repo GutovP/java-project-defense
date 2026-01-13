@@ -124,7 +124,7 @@ public class UserService implements UserDetailsService {
 
         User user = getUserByEmail(normalizedEmail);
 
-        return new AuthenticationMetadata(user.getId(), email, user.getPassword(), user.getRole());
+        return new AuthenticationMetadata(user.getId(), normalizedEmail, user.getPassword(), user.getRole());
     }
 
 }
