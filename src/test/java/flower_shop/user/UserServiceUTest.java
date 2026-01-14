@@ -303,11 +303,11 @@ public class UserServiceUTest {
                 .email(email)
                 .build();
 
-        when(userRepository.findByEmail("original@example.com")).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByEmail(existingUser.getEmail())).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
-        User updatedUser = userService.updateUserProfile("original@example.com", editRequest);
+        User updatedUser = userService.updateUserProfile(existingUser.getEmail(), editRequest);
 
         // Then
         assertEquals(expectedFirst, updatedUser.getFirstName());
