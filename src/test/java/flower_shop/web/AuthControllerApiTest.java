@@ -18,12 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
 import java.util.UUID;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +44,7 @@ public class AuthControllerApiTest {
 
 
     @Test
-    void shouldRegisterUserSuccessfully() throws Exception {
+    void postRequestToRegisterEndpoint_shouldRegisterUserSuccessfully() throws Exception {
 
         // Given
         RegisterRequest dto = RegisterRequest.builder()
@@ -65,12 +62,12 @@ public class AuthControllerApiTest {
         mockMvc.perform(request)
                 .andExpect(status().isCreated());
 
-        verify(userService).register(any(RegisterRequest.class));
+        verify(userService, times(1)).register(any());
 
     }
 
     @Test
-    void shouldReturnError_whenUserAlreadyExists() throws Exception {
+    void postRequestToRegisterEndpoint_shouldReturnErrorWhenUserAlreadyExists() throws Exception {
 
         //Given
         RegisterRequest dto = RegisterRequest.builder()
@@ -81,7 +78,7 @@ public class AuthControllerApiTest {
                 .build();
 
         doThrow(new UserAlreadyExistException("User already exists!"))
-                .when(userService).register(any(RegisterRequest.class));
+                .when(userService).register(any());
 
         MockHttpServletRequestBuilder request = post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,11 +88,11 @@ public class AuthControllerApiTest {
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest());
 
-        verify(userService).register(any(RegisterRequest.class));
+        verify(userService, times(1)).register(any());
     }
 
     @Test
-    void shouldLoginSuccessfully() throws Exception {
+    void postRequestToLoginEndpoint_shouldLoginSuccessfully() throws Exception {
 
         // Given
         LoginRequest dto = LoginRequest.builder()
@@ -127,12 +124,12 @@ public class AuthControllerApiTest {
                 .andExpect(jsonPath("$.token").value("mocked-jwt-token"))
                 .andExpect(jsonPath("$.user.email").value("existing@example.com"));
 
-        verify(userService).loginAndAuthenticate(any(LoginRequest.class));
+        verify(userService, times(1)).loginAndAuthenticate(any());
         verify(userService).getUserByEmail(user.getEmail());
     }
 
     @Test
-    void shouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+    void postRequestToLoginEndpoint_shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
 
         LoginRequest dto = LoginRequest.builder()
                 .email("missing@example.com")
@@ -140,7 +137,7 @@ public class AuthControllerApiTest {
                 .build();
 
         doThrow(new ResourceNotFoundException("Email or password are incorrect."))
-                .when(userService).loginAndAuthenticate(any(LoginRequest.class));
+                .when(userService).loginAndAuthenticate(any());
 
         MockHttpServletRequestBuilder request = post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -149,11 +146,11 @@ public class AuthControllerApiTest {
         mockMvc.perform(request)
                 .andExpect(status().isNotFound());
 
-        verify(userService).loginAndAuthenticate(any(LoginRequest.class));
+        verify(userService, times(1)).loginAndAuthenticate(any());
     }
 
     @Test
-    void shouldReturnUnauthorized_WhenPasswordIsIncorrect() throws Exception {
+    void postRequestToLoginEndpoint_shouldReturnUnauthorizedWhenPasswordIsIncorrect() throws Exception {
 
         LoginRequest dto = LoginRequest.builder()
                 .email("existing@example.com")
@@ -161,7 +158,7 @@ public class AuthControllerApiTest {
                 .build();
 
         doThrow(new AuthenticationException("Email or password are incorrect."))
-                .when(userService).loginAndAuthenticate(any(LoginRequest.class));
+                .when(userService).loginAndAuthenticate(any());
 
         MockHttpServletRequestBuilder request = post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -170,7 +167,7 @@ public class AuthControllerApiTest {
         mockMvc.perform(request)
                 .andExpect(status().isUnauthorized());
 
-        verify(userService).loginAndAuthenticate(any(LoginRequest.class));
+        verify(userService, times(1)).loginAndAuthenticate(any());
     }
 
 
