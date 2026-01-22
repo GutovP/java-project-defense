@@ -43,7 +43,7 @@ public class UserRegistrationITest {
                 .firstName("Ivan")
                 .lastName("Ivanov")
                 .email("admin@gmail.com")
-                .password("securepassword")
+                .password("securePassword")
                 .build();
 
         mockMvc.perform(post("/api/v1/auth/register")
@@ -60,7 +60,7 @@ public class UserRegistrationITest {
                 .firstName("Ivan")
                 .lastName("Ivanov")
                 .email("admin@gmail.com")
-                .password("securepassword")
+                .password("securePassword")
                 .role(UserRole.USER)
                 .build();
         userRepository.save(existingUser);

@@ -37,7 +37,7 @@ public class UserService implements UserDetailsService {
         this.jwtService = jwtService;
     }
 
-    public void register(RegisterRequest registerRequest) {
+    public User register(RegisterRequest registerRequest) {
 
         Optional<User> optionalUser = userRepository.findByEmail(registerRequest.getEmail());
 
@@ -53,14 +53,14 @@ public class UserService implements UserDetailsService {
                 .role(UserRole.USER)
                 .build();
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public String loginAndAuthenticate(LoginRequest loginRequest) {
 
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new ResourceNotFoundException("Email or password are incorrect.");
+            throw new AuthenticationException("Email or password are incorrect.");
         }
 
         User user = optionalUser.get();

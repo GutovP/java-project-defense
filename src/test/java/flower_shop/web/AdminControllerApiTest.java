@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.util.List;
 import java.util.UUID;
 
+import static flower_shop.TestBuilder.aRandomUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -45,13 +46,9 @@ public class AdminControllerApiTest {
     @Test
     void getRequestToUsersEndpoint_shouldReturnAllUsersWhenUserIsAdmin() throws Exception{
 
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .email("test@example.com")
-                .role(UserRole.USER)
-                .build();
+        User randomUser = aRandomUser();
 
-        when(adminService.getAllUsers(UserRole.ADMIN)).thenReturn(List.of(user));
+        when(adminService.getAllUsers(UserRole.ADMIN)).thenReturn(List.of(randomUser));
 
         UUID userId = UUID.randomUUID();
         AuthenticationMetadata principal = new AuthenticationMetadata(userId,"email@test.com","123123", UserRole.ADMIN);
@@ -61,12 +58,11 @@ public class AdminControllerApiTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(user.getId().toString()))
-                .andExpect(jsonPath("$[0].email").value("test@example.com"))
-                .andExpect(jsonPath("$[0].role").value("USER"))
-        ;
+                .andExpect(jsonPath("$[0].id").value(randomUser.getId().toString()))
+                .andExpect(jsonPath("$[0].email").value("existing@example.com"))
+                .andExpect(jsonPath("$[0].role").value("USER"));
 
-        verify(adminService).getAllUsers(UserRole.ADMIN);
+        verify(adminService, times(1)).getAllUsers(UserRole.ADMIN);
     }
 
     @Test
@@ -87,7 +83,7 @@ public class AdminControllerApiTest {
 
         UUID userId = UUID.randomUUID();
         AuthenticationMetadata principal =
-                new AuthenticationMetadata(UUID.randomUUID(), "admin@test.com", "123", UserRole.ADMIN);
+                new AuthenticationMetadata(userId, "admin@test.com", "123", UserRole.ADMIN);
 
         MockHttpServletRequestBuilder request = put("/api/v1/admin/{userId}/role", userId)
                 .param("newRole", "USER")
@@ -97,7 +93,7 @@ public class AdminControllerApiTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-        verify(adminService).changeUserRole(userId, UserRole.USER);
+        verify(adminService, times(1)).changeUserRole(userId, UserRole.USER);
     }
 
     @Test
@@ -105,7 +101,7 @@ public class AdminControllerApiTest {
 
         UUID userId = UUID.randomUUID();
         AuthenticationMetadata principal =
-                new AuthenticationMetadata(UUID.randomUUID(), "user@test.com", "123", UserRole.USER);
+                new AuthenticationMetadata(userId, "user@test.com", "123", UserRole.USER);
 
         MockHttpServletRequestBuilder request = put("/api/v1/admin/{userId}/role", userId)
                 .param("newRole", "ADMIN")
