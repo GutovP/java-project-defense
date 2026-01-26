@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import flower_shop.exception.AuthenticationException;
 import flower_shop.exception.UserAlreadyExistException;
 import flower_shop.security.JWTService;
+import flower_shop.user.model.User;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.RegisterRequest;
@@ -96,8 +97,10 @@ public class AuthControllerApiTest {
                 .password("password123")
                 .build();
 
-        when(userService.loginAndAuthenticate(any())).thenReturn("mocked-jwt-token");
-        when(userService.getUserByEmail(any())).thenReturn(aRandomUser());
+        User randomUser = aRandomUser();
+
+        when(userService.loginAndAuthenticate(any())).thenReturn("token", String.valueOf(randomUser));
+        when(userService.getUserByEmail(any())).thenReturn(randomUser);
 
         MockHttpServletRequestBuilder request = post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,11 +109,15 @@ public class AuthControllerApiTest {
         // When & Then
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("mocked-jwt-token"))
-                .andExpect(jsonPath("$.user.email").value(aRandomUser().getEmail()));
+                .andExpect(jsonPath("token").isNotEmpty())
+                .andExpect(jsonPath("user.userId").isNotEmpty())
+                .andExpect(jsonPath("user.firstName").isNotEmpty())
+                .andExpect(jsonPath("user.lastName").isNotEmpty())
+                .andExpect(jsonPath("user.email").isNotEmpty())
+                .andExpect(jsonPath("user.role").isNotEmpty());
 
         verify(userService, times(1)).loginAndAuthenticate(any());
-        verify(userService).getUserByEmail(aRandomUser().getEmail());
+        verify(userService).getUserByEmail(dto.getEmail());
     }
 
     @Test

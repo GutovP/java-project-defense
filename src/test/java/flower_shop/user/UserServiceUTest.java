@@ -134,7 +134,7 @@ public class UserServiceUTest {
         when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> userService.loginAndAuthenticate(dto));
+        assertThrows(AuthenticationException.class, () -> userService.loginAndAuthenticate(dto));
         verify(userRepository, never()).save(any());
     }
 

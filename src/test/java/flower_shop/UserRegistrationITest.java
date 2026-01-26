@@ -1,36 +1,34 @@
 package flower_shop;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import flower_shop.exception.UserAlreadyExistException;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
+import flower_shop.user.service.UserService;
 import flower_shop.web.dto.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@AutoConfigureMockMvc
 @SpringBootTest
 public class UserRegistrationITest {
 
+
     @Autowired
-    private MockMvc mockMvc;
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
-
 
     @BeforeEach
     void setUp() {
@@ -38,44 +36,59 @@ public class UserRegistrationITest {
     }
 
     @Test
-    void shouldRegisterUserSuccessfully() throws Exception {
+    void shouldRegisterUserSuccessfully() {
+
+        // Given
         RegisterRequest registerRequest = RegisterRequest.builder()
-                .firstName("Ivan")
-                .lastName("Ivanov")
+                .firstName("FirstName")
+                .lastName("LastName")
                 .email("admin@gmail.com")
-                .password("securePassword")
+                .password("password")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(registerRequest)))
-                .andExpect(status().isCreated());
+        // When
+        User user = userService.register(registerRequest);
 
-        assertTrue(userRepository.findByEmail(registerRequest.getEmail()).isPresent());
+        // Then
+        assertNotNull(user);
+
+        assertEquals("FirstName", user.getFirstName());
+        assertEquals("LastName", user.getLastName());
+        assertEquals("admin@gmail.com", user.getEmail());
+        assertEquals(UserRole.USER, user.getRole());
+
+        assertNotEquals("encodedPassword", user.getPassword());
+
+        assertTrue(userRepository.findByEmail("admin@gmail.com").isPresent());
+
+
     }
 
     @Test
-    void shouldNotRegisterUserWithExistingEmail() throws Exception {
+    void shouldNotRegisterUserWithExistingEmail() {
+
+        // Given
         User existingUser = User.builder()
-                .firstName("Ivan")
-                .lastName("Ivanov")
+                .firstName("FirstName")
+                .lastName("LastName")
                 .email("admin@gmail.com")
-                .password("securePassword")
+                .password("password")
                 .role(UserRole.USER)
                 .build();
+
         userRepository.save(existingUser);
 
-        RegisterRequest request = RegisterRequest.builder()
-                .firstName("Pesho")
-                .lastName("Peshev")
+        RegisterRequest requestDto = RegisterRequest.builder()
+                .firstName("FirstNewName")
+                .lastName("LastNewName")
                 .email("admin@gmail.com")
-                .password("securepassword")
+                .password("password")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+        // When & Then
+        assertThrows(UserAlreadyExistException.class, () -> userService.register(requestDto));
+
+
     }
 
 }
