@@ -1,24 +1,22 @@
 package flower_shop;
 
-
 import flower_shop.exception.ResourceNotFoundException;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.ProfileEditRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 public class UserProfileUpdateITest {
 
@@ -31,6 +29,10 @@ public class UserProfileUpdateITest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+    }
 
 
     @Test

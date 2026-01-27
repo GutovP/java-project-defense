@@ -6,16 +6,15 @@ import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.RegisterRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 public class UserRegistrationITest {
 
@@ -25,6 +24,10 @@ public class UserRegistrationITest {
     @Autowired
     private UserRepository userRepository;
 
+    @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+    }
 
 
     @Test
