@@ -7,7 +7,6 @@ import flower_shop.user.model.UserRole;
 import flower_shop.user.repository.UserRepository;
 import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,10 +34,7 @@ public class UserLoginITest {
     @Autowired
     private JWTService jwtService;
 
-    @BeforeEach
-    public void setUp() {
-        userRepository.deleteAll();
-    }
+
 
     @Test
     void shouldLoginSuccessfullyAndReturnJwtToken() {
