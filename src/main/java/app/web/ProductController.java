@@ -1,0 +1,118 @@
+package app.web;
+
+import app.product.model.Product;
+import app.product.service.ProductService;
+import app.security.AuthenticationMetadata;
+import app.user.model.UserRole;
+import app.web.dto.ProductRequest;
+import app.web.dto.ProductResponse;
+import app.web.dto.UpdateQuantityRequest;
+import app.web.mapper.DtoMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.UUID;
+
+
+import static app.web.Paths.API_V1_BASE_PATH;
+
+@RestController
+@RequestMapping(API_V1_BASE_PATH + "/products")
+@Tag(name = "Product Endpoints", description = "endpoints related to the products")
+public class ProductController {
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductResponse>> getAllProducts(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
+
+        List<ProductResponse> productsResponse = productService.getAllProducts(userRole).stream()
+                .map(DtoMapper::toProductResponse)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(productsResponse);
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getAllCategories() {
+
+        List<String> categories = productService.getAllCategories();
+
+        return ResponseEntity.status(HttpStatus.OK).body(categories);
+    }
+
+    @GetMapping("/{category}")
+    public ResponseEntity<List<ProductResponse>> getProductsByCategory(@PathVariable String category, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
+
+        List<ProductResponse> productsResponse = productService.getProductsByCategory(category, userRole).stream()
+                .map(DtoMapper::toProductResponse)
+                .toList();
+
+       return ResponseEntity.status(HttpStatus.OK).body(productsResponse);
+    }
+
+    @GetMapping("/{category}/{name}")
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable String category, @PathVariable String name, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+        UserRole userRole = (authenticationMetadata != null) ? authenticationMetadata.getUserRole() : UserRole.USER;
+
+        Product product = productService.getProduct(category, name, userRole);
+
+        ProductResponse productResponse = DtoMapper.toProductResponse(product);
+
+        return ResponseEntity.status(HttpStatus.OK).body(productResponse);
+    }
+
+
+    @PutMapping("/{category}/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateQuantity(@PathVariable String category, @PathVariable String name,
+                                               @RequestBody UpdateQuantityRequest updateQuantityRequest,
+                                               @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+       UserRole userRole = authenticationMetadata.getUserRole();
+
+       boolean isUpdated = productService.updateProductQuantity(category, name, updateQuantityRequest.getQuantity(),  userRole);
+
+        if (isUpdated) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductResponse> createNewProduct(@RequestBody @Valid ProductRequest productRequest) {
+
+        Product product = productService.createNewProduct(productRequest);
+
+        ProductResponse productResponse = DtoMapper.toProductResponse(product);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
+    }
+
+    @DeleteMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public  ResponseEntity<Void> removeProduct(@PathVariable UUID productId) {
+
+        productService.removeProduct(productId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+}
