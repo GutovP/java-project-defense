@@ -8,6 +8,7 @@ import flower_shop.user.service.UserService;
 import flower_shop.web.dto.BasketRequest;
 import flower_shop.web.dto.BasketResponse;
 import flower_shop.web.mapper.DtoMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/basket")
+@Tag(name = "Basket Endpoints", description = "endpoints related to user's basket")
 public class BasketController {
 
     private final BasketService basketService;

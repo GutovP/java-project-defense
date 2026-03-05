@@ -6,6 +6,7 @@ import flower_shop.user.service.UserService;
 import flower_shop.web.dto.PasswordChangeRequest;
 import flower_shop.web.dto.ProfileEditRequest;
 import flower_shop.web.dto.ProfileResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/user")
+@Tag(name = "Profile Endpoints", description = "endpoints related to user's profile")
 public class ProfileEditController {
 
     private final UserService userService;

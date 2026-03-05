@@ -5,6 +5,7 @@ import flower_shop.user.service.UserService;
 import flower_shop.web.dto.LoginRequest;
 import flower_shop.web.dto.LoginResponse;
 import flower_shop.web.dto.RegisterRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/auth")
+@Tag(name = "Authentication Endpoints", description = "endpoints related to the authentication")
 public class AuthController {
 
     private final UserService userService;

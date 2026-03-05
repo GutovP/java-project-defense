@@ -5,6 +5,7 @@ import flower_shop.security.AuthenticationMetadata;
 import flower_shop.user.model.User;
 import flower_shop.user.model.UserRole;
 import flower_shop.web.dto.UserResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/admin")
+@Tag(name = "Admin Endpoints", description = "Admin related endpoints")
 public class AdminController {
 
     private final AdminService adminService;

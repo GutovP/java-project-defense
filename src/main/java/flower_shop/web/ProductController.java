@@ -8,6 +8,7 @@ import flower_shop.web.dto.ProductRequest;
 import flower_shop.web.dto.ProductResponse;
 import flower_shop.web.dto.UpdateQuantityRequest;
 import flower_shop.web.mapper.DtoMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import static flower_shop.web.Paths.API_V1_BASE_PATH;
 
 @RestController
 @RequestMapping(API_V1_BASE_PATH + "/products")
+@Tag(name = "Product Endpoints", description = "endpoints related to the products")
 public class ProductController {
 
     private final ProductService productService;
