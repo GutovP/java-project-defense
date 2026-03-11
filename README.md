@@ -52,7 +52,7 @@ Data is persisted using a MySQL database.
 - Other: Lombok
 
 ## Project Structure
-
+```
 src/main/java/app
 ├── admin
 │   ├── model                 # Admin-specific entities
@@ -100,7 +100,7 @@ src/main/java/app
     ├── BasketController      # REST controllers (basket/cart endpoints)
     ├── ProductController     # REST controllers (products endpoints)
     ├── ProfileEditController # REST controllers (change user profile endpoints)
-
+```
 ## Prerequisites
 
 - Java 17+
