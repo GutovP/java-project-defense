@@ -36,10 +36,11 @@ Data is persisted using a MySQL database.
 
 ### Architecture
 
-- Layered architecture (Controller → Service → Repository)
-- DTO mapping for clean API responses
-- Global exception handling
-- Validation with Jakarta Validation
+- **Modular domain‑driven structure** (admin, basket, product, user).
+- **Vertical slices**: each feature contains its own model, repository and service.
+- **API layer** in ```/web``` with controllers, DTOs and mappers.
+- Centralized exception handling.
+- Validation with Jakarta Validation.
 
 ### Tech Stack
 
