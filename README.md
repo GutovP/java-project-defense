@@ -2,7 +2,7 @@
 
 A **Spring Boot** e-commerce application with **MySQL** database, **JWT authentication** 
 and **role-based authorization** (User/Admin). 
-This platform allows users to browse products, manage their cart, and place orders, while admins can manage products, users, and orders.
+This platform allows users to browse products, manage their cart and place orders, while admins can manage products, users, and orders.
 
 ## Features
 
