@@ -1,7 +1,5 @@
 package app.user.service;
 
-import app.event.UserRegisteredEventProducer;
-import app.event.payload.UserRegisteredEvent;
 import app.exception.AuthenticationException;
 import app.exception.ResourceNotFoundException;
 import app.exception.UserAlreadyExistException;
@@ -21,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,15 +28,13 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final UserRegisteredEventProducer userRegisteredEventProducer;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTService jwtService, UserRegisteredEventProducer userRegisteredEventProducer) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.userRegisteredEventProducer = userRegisteredEventProducer;
     }
 
     public User register(RegisterRequest registerRequest) {
@@ -60,13 +54,6 @@ public class UserService implements UserDetailsService {
                 .build();
 
         userRepository.save(user);
-
-        UserRegisteredEvent userRegisteredEvent = UserRegisteredEvent.builder()
-                .userId(user.getId())
-                .createdOn(LocalDateTime.now())
-                .build();
-
-        userRegisteredEventProducer.sendEvent(userRegisteredEvent);
 
         return user;
     }

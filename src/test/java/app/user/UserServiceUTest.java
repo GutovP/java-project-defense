@@ -1,6 +1,5 @@
 package app.user;
 
-import app.event.UserRegisteredEventProducer;
 import app.exception.AuthenticationException;
 import app.exception.ResourceNotFoundException;
 import app.exception.UserAlreadyExistException;
@@ -47,8 +46,6 @@ public class UserServiceUTest {
     private AuthenticationManager authenticationManager;
     @Mock
     private JWTService jwtService;
-    @Mock
-    private UserRegisteredEventProducer userRegisteredEventProducer;
 
 
     @InjectMocks

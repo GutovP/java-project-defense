@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,12 +27,23 @@ public class EmailService {
         this.emailClient = emailClient;
     }
 
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
+    @Transactional
     public void checkProducts() {
 
         List<Product> lowStockProducts = productRepository.findByCurrentQuantityLessThanThreshold();
 
+        if (!lowStockProducts.isEmpty()) {
+
             sendRestockAlert(lowStockProducts);
+
+            for (Product product : lowStockProducts) {
+                product.setRestockAlertSent(true);
+            }
+            productRepository.saveAll(lowStockProducts);
+
+            log.info("Restock-Alert sent für {} products.", lowStockProducts.size());
+        }
 
     }
 

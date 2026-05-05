@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@FeignClient(name = "notification-service", url = "http://localhost:8081/api/v1/notifications")
+@FeignClient(name = "notification-service", url = "http://notification-svc:8081/api/v1/notifications")
 public interface EmailClient {
 
     @PostMapping("/restockAlert")
