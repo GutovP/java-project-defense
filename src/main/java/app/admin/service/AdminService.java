@@ -8,6 +8,7 @@ import app.user.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,5 +36,12 @@ public class AdminService {
 
         user.setRole(newRole);
         adminRepository.save(user);
+    }
+
+    public void deleteUser(UUID userId) {
+
+        Optional<User> optionalUser = adminRepository.findById(userId);
+
+        optionalUser.ifPresent(adminRepository::delete);
     }
 }

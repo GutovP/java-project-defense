@@ -52,4 +52,14 @@ public class AdminController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public  ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+
+        adminService.deleteUser(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+    }
 }
