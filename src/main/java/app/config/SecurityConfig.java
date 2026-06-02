@@ -42,13 +42,11 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/api/v1/products/**",
                                 "/swagger-ui/index.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml"
+                                "/swagger-ui/**"
                         ).permitAll() // Public endpoints
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
