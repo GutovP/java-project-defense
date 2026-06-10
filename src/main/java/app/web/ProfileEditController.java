@@ -1,6 +1,7 @@
 package app.web;
 
 import app.security.AuthenticationMetadata;
+import app.security.JWTService;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.PasswordChangeRequest;
@@ -22,10 +23,12 @@ import static app.web.Paths.API_V1_BASE_PATH;
 public class ProfileEditController {
 
     private final UserService userService;
+    private final JWTService jwtService;
 
     @Autowired
-    public ProfileEditController(UserService userService) {
+    public ProfileEditController(UserService userService, JWTService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/profile")
@@ -41,9 +44,11 @@ public class ProfileEditController {
     @PutMapping("/profile")
     public ResponseEntity<ProfileResponse> updateProfile(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata, @RequestBody @Valid ProfileEditRequest profileEditRequest) {
 
-        String email = authenticationMetadata.getUsername();
-        User updatedUser = userService.updateUserProfile(email, profileEditRequest);
-        ProfileResponse profileResponse = new ProfileResponse(updatedUser);
+        String oldEmail = authenticationMetadata.getUsername();
+        User updatedUser = userService.updateUserProfile(oldEmail, profileEditRequest);
+
+        String newToken = jwtService.generateToken(updatedUser.getEmail(),  updatedUser.getRole());
+        ProfileResponse profileResponse = new ProfileResponse(updatedUser, newToken);
 
         return ResponseEntity.ok(profileResponse);
     }

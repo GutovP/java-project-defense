@@ -14,6 +14,7 @@ public class ProfileResponse {
     private String lastName;
     private String email;
     private UserRole role;
+    private String token;
 
     public ProfileResponse(User user) {
         this.userId = user.getId();
@@ -21,5 +22,10 @@ public class ProfileResponse {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.role = user.getRole();
+    }
+
+    public ProfileResponse(User user, String token) {
+        this(user);
+        this.token = token;
     }
 }
