@@ -3,7 +3,7 @@ package app.user.model;
 import app.basket.model.Basket;
 import jakarta.persistence.*;
 import lombok.*;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +32,9 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private LocalDateTime registeredOn;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
