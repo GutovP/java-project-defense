@@ -40,9 +40,6 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @Column(nullable = false)
-    private String testColumn1;
-
     @OneToMany(mappedBy = "user")
     private List<Basket> baskets = new ArrayList<>();
     

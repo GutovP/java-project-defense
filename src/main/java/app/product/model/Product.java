@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -37,8 +39,12 @@ public class Product {
     @Column
     private int currentQuantity;
 
-    @Column
-    private String image;
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    @OrderColumn(name = "display_order")
+    private List<String> images = new ArrayList<>();
 
     @Column
     private String category;

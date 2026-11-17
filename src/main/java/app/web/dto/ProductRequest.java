@@ -2,10 +2,12 @@ package app.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,8 +24,8 @@ public class ProductRequest {
     @NotBlank
     private int quantity;
 
-    @NotBlank
-    private String image;
+    @NotEmpty
+    private List<String> images;
 
     @NotBlank
     private String category;

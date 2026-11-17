@@ -58,7 +58,7 @@ public class ProductService {
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
                 .salePrice(productRequest.getSalePrice())
-                .image(productRequest.getImage())
+                .images(productRequest.getImages())
                 .currentQuantity(productRequest.getQuantity())
                 .category(productRequest.getCategory())
                 .restockThreshold(5)

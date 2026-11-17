@@ -20,7 +20,7 @@ public class DtoMapper {
                         item.getId(),
                         item.getProduct().getName(),
                         item.getProduct().getSalePrice(),
-                        item.getProduct().getImage(),
+                        item.getProduct().getImages(),
                         item.getQuantity(),
                         item.getProduct().getSalePrice().multiply(BigDecimal.valueOf(item.getQuantity()))
 
@@ -37,7 +37,7 @@ public class DtoMapper {
                 .description(product.getDescription())
                 .salePrice(product.getSalePrice())
                 .categoryName(product.getCategory())
-                .image(product.getImage())
+                .images(product.getImages())
                 .currentQuantity(product.getCurrentQuantity())
                 .build();
     }

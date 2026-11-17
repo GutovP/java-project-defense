@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,7 +19,7 @@ public class BasketItemResponse {
 
     private BigDecimal productPrice;
 
-    private String image;
+    private List<String> images;
 
     private int quantity;
 
