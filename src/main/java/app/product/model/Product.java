@@ -16,7 +16,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@SQLRestriction("inactive = false")
 public class Product {
 
     @Id
