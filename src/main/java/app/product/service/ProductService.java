@@ -62,7 +62,6 @@ public class ProductService {
                 .currentQuantity(productRequest.getQuantity())
                 .category(productRequest.getCategory())
                 .restockThreshold(5)
-                .inactive(false)
                 .build();
 
         productRepository.save(product);
@@ -96,12 +95,6 @@ public class ProductService {
 
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
-        if (optionalProduct.isPresent()) {
-
-            Product product = optionalProduct.get();
-            product.setInactive(true);
-            productRepository.save(product);
-
-        }
+        optionalProduct.ifPresent(productRepository::delete);
     }
 }

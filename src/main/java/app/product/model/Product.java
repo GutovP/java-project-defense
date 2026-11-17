@@ -53,7 +53,4 @@ public class Product {
     private Integer restockThreshold = 5;
 
     private boolean restockAlertSent = false;
-
-    @Column(nullable = false)
-    private Boolean inactive = false;
 }
