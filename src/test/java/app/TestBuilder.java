@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,10 +47,9 @@ public class TestBuilder {
                     .costPrice(BigDecimal.ONE)
                     .salePrice(BigDecimal.TEN)
                     .currentQuantity(7)
-                    .image("www.image.com")
+                    .images(Collections.singletonList("www.image.com"))
                     .category("SomeCategory")
                     .restockThreshold(1)
-                    .inactive(false)
                     .build();
 
             user.setBaskets(List.of(basket));
