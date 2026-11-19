@@ -8,6 +8,7 @@ import app.web.dto.BasketResponse;
 import app.web.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,13 +23,13 @@ public class DtoMapperUTest {
         Product product1 = Product.builder()
                 .name("Product A")
                 .salePrice(new BigDecimal("10.00"))
-                .image("imageA.png")
+                .images(Collections.singletonList("imageA.png"))
                 .build();
 
         Product product2 = Product.builder()
                 .name("Product B")
                 .salePrice(new BigDecimal("5.50"))
-                .image("imageB.png")
+                .images(Collections.singletonList("imageB.png"))
                 .build();
 
         BasketItem item1 = BasketItem.builder()
@@ -58,7 +59,7 @@ public class DtoMapperUTest {
         assertEquals(item1.getId(), firstItem.getBasketId());
         assertEquals(product1.getName(), firstItem.getProductName());
         assertEquals(product1.getSalePrice(), firstItem.getProductPrice());
-        assertEquals(product1.getImage(), firstItem.getImage());
+        assertEquals(product1.getImages(), firstItem.getImages());
         assertEquals(item1.getQuantity(), firstItem.getQuantity());
         assertEquals(product1.getSalePrice().multiply(BigDecimal.valueOf(item1.getQuantity())), firstItem.getItemTotalPrice());
 
@@ -66,7 +67,7 @@ public class DtoMapperUTest {
         assertEquals(item2.getId(), secondItem.getBasketId());
         assertEquals(product2.getName(), secondItem.getProductName());
         assertEquals(product2.getSalePrice(), secondItem.getProductPrice());
-        assertEquals(product2.getImage(), secondItem.getImage());
+        assertEquals(product2.getImages(), secondItem.getImages());
         assertEquals(item2.getQuantity(), secondItem.getQuantity());
         assertEquals(product2.getSalePrice().multiply(BigDecimal.valueOf(item2.getQuantity())), secondItem.getItemTotalPrice());
 
@@ -83,7 +84,7 @@ public class DtoMapperUTest {
                 .description("Powerful machine")
                 .salePrice(new BigDecimal("999.99"))
                 .category("Electronics")
-                .image("laptop.png")
+                .images(Collections.singletonList("laptop.png"))
                 .currentQuantity(7)
                 .build();
 
@@ -96,7 +97,7 @@ public class DtoMapperUTest {
         assertEquals(product.getDescription(), response.getDescription());
         assertEquals(product.getSalePrice(), response.getSalePrice());
         assertEquals(product.getCategory(), response.getCategoryName());
-        assertEquals(product.getImage(), response.getImage());
+        assertEquals(product.getImages(), response.getImages());
         assertEquals(product.getCurrentQuantity(), response.getCurrentQuantity());
     }
 
